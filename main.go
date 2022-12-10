@@ -140,7 +140,7 @@ func main() {
 	if !terminal_mode {
 		err := os.Remove(path + "/" + currentDate + ".md")
 		if err != nil {
-			fmt.Println("INFO: Coudn't remove old file: ", err)
+			// fmt.Println("INFO: Coudn't remove old file: ", err)
 		}
 	}
 
