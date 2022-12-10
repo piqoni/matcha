@@ -74,6 +74,11 @@ func writeToMarkdown(body string) {
 var currentDate = time.Now().Format("2006-01-02")
 
 func main() {
+	currentDir, direrr := os.Getwd()
+	if direrr != nil {
+		log.Println(direrr)
+	}
+	generateConfigFile(currentDir)
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
 	err := viper.ReadInConfig()
@@ -85,11 +90,7 @@ func main() {
 	if viper.IsSet("markdown_dir_path") {
 		path = viper.Get("markdown_dir_path").(string)
 	} else {
-		path, err = os.Getwd()
-		if err != nil {
-			log.Println(err)
-		}
-
+		path = currentDir
 	}
 
 	myMap := []RSS{}
