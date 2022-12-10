@@ -58,7 +58,7 @@ func writeToMarkdown(body string) {
 	if terminal_mode {
 		fmt.Println(body)
 	} else {
-		f, err := os.OpenFile(path+currentDate+".md", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		f, err := os.OpenFile(path+"/"+currentDate+".md", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -138,7 +138,7 @@ func main() {
 	defer db.Close()
 
 	if !terminal_mode {
-		err := os.Remove(path + currentDate + ".md")
+		err := os.Remove(path + "/" + currentDate + ".md")
 		if err != nil {
 			fmt.Println("INFO: Coudn't remove old file: ", err)
 		}
