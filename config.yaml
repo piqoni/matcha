@@ -1,0 +1,13 @@
+markdown_dir_path: /Users/piqoni/Library/Mobile Documents/iCloud~md~obsidian/Documents/notes/Brew/
+feeds:
+  - http://hnrss.org/best 10
+  - https://soundvenue.com/feed
+  - http://www.dr.dk/nyheder/service/feeds/allenyheder
+  - https://waitbutwhy.com/feed
+  - http://tonsky.me/blog/atom.xml
+  - http://www.joelonsoftware.com/rss.xml
+  - https://www.youtube.com/feeds/videos.xml?channel_id=UCHnyfMqiRRG1u-2MsSQLbXA
+google_news_keywords: George Hotz,ChatGPT,Copenhagen 
+instapaper: true 
+weather_latitude: 55.67
+weather_longitude: 12.51
