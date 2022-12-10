@@ -8,7 +8,7 @@ Matcha is a daily digest generator for your RSS feeds and interested topics/keyw
  - Weather for the next 12 Hours (from [YR](https://www.yr.no/))
  - Quick bookmarking of articles to Instapaper
  - Interested Topics/Keywords to follow (through [Google News](https://news.google.com/))
- - Hacker News comments direct link and distinguishing hot articles 🔥
+ - Hacker News comments direct link and distinguishing mostly dicussed posts 🔥
 
  
 ## Installation / Usage
