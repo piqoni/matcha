@@ -116,7 +116,6 @@ func main() {
 		//FIXME
 		googleNewsUrl := "https://news.google.com/rss/search?hl=en-US&gl=US&ceid=US%3Aen&oc=11&q=" + strings.Join(strings.Split(googleNewsKeywords, "%2C"), "%20%7C%20")
 		myMap = append(myMap, RSS{url: googleNewsUrl, limit: 15}) // #FIXME make it configurable
-		fmt.Println(googleNewsUrl)
 	}
 	instapaper := viper.GetBool("instapaper")
 
