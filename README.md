@@ -1,5 +1,5 @@
 # 🍵 Matcha
-Matcha is a simple daily digest generator for your RSS feeds and interested topics/keywords. Using a markdown reader (such as Obsidian), one can navigate through articles at their own pace.
+Matcha is a simple daily digest generator for your RSS feeds and interested topics/keywords. Using a markdown reader (such as Obsidian), one can navigate through articles at their pace and whenever they want, thus avoiding FOMO and systematic scrolling. 
 
 <img width="700" alt="image" src="https://user-images.githubusercontent.com/3144671/206862015-9a325a14-cd8b-4ac3-97bc-55c81008c0df.png">
 
