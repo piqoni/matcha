@@ -11,9 +11,9 @@ import (
 	"strings"
 	"time"
 
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/mmcdole/gofeed"
 	"github.com/spf13/viper"
+	_ "modernc.org/sqlite"
 )
 
 var path string
@@ -130,7 +130,7 @@ func main() {
 		}
 	}
 
-	db, err := sql.Open("sqlite3", dbPath+"/brew/foo.db")
+	db, err := sql.Open("sqlite", dbPath+"/brew/matcha.db")
 	check(err)
 	// create new table on database
 	_, err = db.Exec("CREATE TABLE IF NOT EXISTS seen (url TEXT, date TEXT)")
