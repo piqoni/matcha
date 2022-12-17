@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/mmcdole/gofeed"
+	"github.com/savioxavier/termlink"
 	"github.com/spf13/viper"
 	_ "modernc.org/sqlite"
 )
@@ -32,7 +33,18 @@ func check(e error) {
 	}
 }
 
+func writeLink(title string, url string) string {
+	if terminal_mode {
+		return termlink.Link(title, url)
+	} else {
+		return "[" + title + "](" + url + ")"
+	}
+}
+
 func favicon(s *gofeed.Feed) string {
+	if terminal_mode {
+		return ""
+	}
 	var src string
 	if s.FeedLink == "" {
 		// default favicon #FIXME
@@ -202,17 +214,16 @@ func main() {
 					fmt.Println(err)
 				}
 				if comments_number_int < 100 {
-					items += "[💬](" + comments_url + ")  "
+					items += writeLink("💬 ", comments_url)
 				} else {
-					items += "[🔥](" + comments_url + ")  "
+					items += writeLink("🔥 ", comments_url)
 				}
 			}
-			if instapaper {
+			if instapaper && !terminal_mode {
 				items += "[<img height=\"16\" src=\"https://staticinstapaper.s3.dualstack.us-west-2.amazonaws.com/img/favicon.png\">](https://www.instapaper.com/hello2?url=" + item.Link + ")"
 			}
-			items += "[" + item.Title + "](" + item.Link + ")"
+			items += writeLink(item.Title, item.Link)
 			items += "\n"
-
 		}
 
 		if items != "" {
