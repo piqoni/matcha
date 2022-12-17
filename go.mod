@@ -1,4 +1,4 @@
-module rss-go
+module matcha
 
 go 1.18
 

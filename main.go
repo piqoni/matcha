@@ -181,9 +181,9 @@ func main() {
 				// fmt.Println("Skipping: " + item.Link)
 				continue
 			} else {
-				stmt, err := db.Prepare("INSERT INTO seen(url, date) values(?,DATE('now'))")
+				stmt, err := db.Prepare("INSERT INTO seen(url, date) values(?,?)")
 				check(err)
-				res, err := stmt.Exec(item.Link)
+				res, err := stmt.Exec(item.Link, currentDate)
 				check(err)
 				_ = res
 				stmt.Close()
