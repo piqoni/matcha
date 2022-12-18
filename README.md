@@ -3,6 +3,10 @@ Matcha is a daily digest generator for your RSS feeds and interested topics/keyw
 
 <img width="900" alt="image" src="https://user-images.githubusercontent.com/3144671/206862015-9a325a14-cd8b-4ac3-97bc-55c81008c0df.png">
 
+Terminal Mode: 
+
+<img width="596" alt="image" src="https://user-images.githubusercontent.com/3144671/208323296-af2d6a51-7d33-42a9-a827-0e96a4a383fd.png">
+
 ## Features
  - RSS daily **digest**, it will show only articles not previously seen
  - Weather for the next 12 Hours (from [YR](https://www.yr.no/))
