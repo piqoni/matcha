@@ -9,6 +9,7 @@ Matcha is a daily digest generator for your RSS feeds and interested topics/keyw
  - Quick bookmarking of articles to Instapaper
  - Interested Topics/Keywords to follow (through [Google News](https://news.google.com/))
  - Hacker News comments direct link and distinguishing mostly dicussed posts 🔥
+ - Terminal Mode by calling `./matcha -t` 
 
  
 ## Installation / Usage
