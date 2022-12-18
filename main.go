@@ -5,16 +5,17 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/mmcdole/gofeed"
-	"github.com/savioxavier/termlink"
-	"github.com/spf13/viper"
 	"log"
-	_ "modernc.org/sqlite"
 	"net/url"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/mmcdole/gofeed"
+	"github.com/savioxavier/termlink"
+	"github.com/spf13/viper"
+	_ "modernc.org/sqlite"
 )
 
 var path string
