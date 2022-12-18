@@ -213,10 +213,7 @@ func main() {
 				first_comments_index := strings.Index(item.Description, "Comments:") + 10
 				// replace </p> with empty string
 				comments_number := strings.Replace(item.Description[first_comments_index:], "</p>\n", "", -1)
-				comments_number_int, err := strconv.Atoi(comments_number)
-				if err != nil {
-					fmt.Println(err)
-				}
+				comments_number_int, _ := strconv.Atoi(comments_number)
 				if comments_number_int < 100 {
 					items += writeLink("💬 ", comments_url)
 				} else {
