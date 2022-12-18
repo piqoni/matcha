@@ -18,8 +18,8 @@ import (
 )
 
 var path string
-
 var terminal_mode bool = false
+var currentDate = time.Now().Format("2006-01-02")
 
 type RSS struct {
 	url      string
@@ -82,8 +82,6 @@ func writeToMarkdown(body string) {
 		}
 	}
 }
-
-var currentDate = time.Now().Format("2006-01-02")
 
 func main() {
 	currentDir, direrr := os.Getwd()
