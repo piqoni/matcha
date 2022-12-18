@@ -16,7 +16,8 @@ feeds:
 google_news_keywords: George Hotz,ChatGPT,Copenhagen 
 instapaper: true 
 weather_latitude: 37.77
-weather_longitude: 122.41`
+weather_longitude: 122.41
+terminal_mode: false`
 
 func generateConfigFile(currentDir string) {
 	configPath := currentDir + "/" + "config.yaml"
