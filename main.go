@@ -231,7 +231,7 @@ func main() {
 		}
 
 		if items != "" {
-			writeToMarkdown("\n### " + favicon(feed) + "  " + feed.Title + "\n")
+			writeToMarkdown("### " + favicon(feed) + "  " + feed.Title + "\n")
 			writeToMarkdown(items)
 		}
 
