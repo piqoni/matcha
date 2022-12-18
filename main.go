@@ -3,23 +3,23 @@ package main
 import (
 	"database/sql"
 	"errors"
+	"flag"
 	"fmt"
+	"github.com/mmcdole/gofeed"
+	"github.com/savioxavier/termlink"
+	"github.com/spf13/viper"
 	"log"
+	_ "modernc.org/sqlite"
 	"net/url"
 	"os"
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/mmcdole/gofeed"
-	"github.com/savioxavier/termlink"
-	"github.com/spf13/viper"
-	_ "modernc.org/sqlite"
 )
 
 var path string
 
-const terminal_mode = false
+var terminal_mode bool = false
 
 type RSS struct {
 	url      string
@@ -131,6 +131,11 @@ func main() {
 		myMap = append(myMap, RSS{url: googleNewsUrl, limit: 15}) // #FIXME make it configurable
 	}
 	instapaper := viper.GetBool("instapaper")
+	terminal_mode = viper.GetBool("terminal_mode")
+
+	// if -t parameter is passed overwrite terminal_mode setting in config.yml
+	flag.BoolVar(&terminal_mode, "t", terminal_mode, "run in terminal mode")
+	flag.Parse()
 
 	dbPath, err := os.UserConfigDir()
 	check(err)
