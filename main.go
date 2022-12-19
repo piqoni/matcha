@@ -126,7 +126,6 @@ func main() {
 		myMap = append(myMap, RSS{url: chopped[0], limit: limit})
 	}
 	if googleNewsKeywords != "" {
-		//FIXME
 		googleNewsUrl := "https://news.google.com/rss/search?hl=en-US&gl=US&ceid=US%3Aen&oc=11&q=" + strings.Join(strings.Split(googleNewsKeywords, "%2C"), "%20%7C%20")
 		myMap = append(myMap, RSS{url: googleNewsUrl, limit: 15}) // #FIXME make it configurable
 	}
