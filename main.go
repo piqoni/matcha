@@ -21,6 +21,7 @@ import (
 var path string
 var terminal_mode bool = false
 var currentDate = time.Now().Format("2006-01-02")
+var currentDir string
 
 type RSS struct {
 	url      string
@@ -223,7 +224,15 @@ func main() {
 			if instapaper && !terminal_mode {
 				items += "[<img height=\"16\" src=\"https://staticinstapaper.s3.dualstack.us-west-2.amazonaws.com/img/favicon.png\">](https://www.instapaper.com/hello2?url=" + item.Link + ")"
 			}
-			items += writeLink(item.Title, item.Link)
+
+			title := item.Title
+			link := item.Link
+
+			// Mastodon RSS has not Title, use Description instead
+			if title == "" {
+				title = stripHtmlRegex(item.Description)
+			}
+			items += writeLink(title, link)
 			items += "\n"
 		}
 
