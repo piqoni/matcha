@@ -228,7 +228,7 @@ func main() {
 			title := item.Title
 			link := item.Link
 
-			// Mastodon RSS has not Title, use Description instead
+			// Mastodon RSS has no Title, use Description instead
 			if title == "" {
 				title = stripHtmlRegex(item.Description)
 			}
