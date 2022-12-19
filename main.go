@@ -21,7 +21,6 @@ import (
 var path string
 var terminal_mode bool = false
 var currentDate = time.Now().Format("2006-01-02")
-var currentDir string
 
 type RSS struct {
 	url      string
@@ -49,8 +48,8 @@ func favicon(s *gofeed.Feed) string {
 	}
 	var src string
 	if s.FeedLink == "" {
-		// default favicon #FIXME
-		src = "https://www.cloudflare.com/favicon.ico"
+		// default feed favicon
+		return "🍵"
 
 	} else {
 		u, err := url.Parse(s.FeedLink)
