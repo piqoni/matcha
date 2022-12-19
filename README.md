@@ -20,3 +20,21 @@ Terminal Mode:
 1. Since Matcha generates markdown, any markdown reader should do the job. Currently it has been tested on [Obsidian](https://obsidian.md/) so you need a markdown reader before moving on. 
 2. **Download the [corresponding binary](https://github.com/piqoni/matcha/releases)** based on your OS and after executing, a sample `config.yml` will be generated, which you can add in your rss feeds, keywords and the `markdown_dir_path` where you want the markdown files to be generated (if left empty, it will generate the daily digest on current dir). 
 3. You can either execute matcha on-demand (a terminal alias) or set a cron to run matcha as often as you want. Even if you set it to execute every hour, matcha will still generate daily digests, one file per day, and will add more articles to it if new articles are published throughout the day. 
+
+## Configuration
+On first execution, Matcha will generate the following config.yaml file on the same directory as the application. Change the 'feeds' to your actual RSS feeds, and google_news_keywords to the keywords you are interested in. 
+
+```yaml 
+markdown_dir_path: 
+feeds:
+  - http://hnrss.org/best 10
+  - https://waitbutwhy.com/feed
+  - http://tonsky.me/blog/atom.xml
+  - http://www.joelonsoftware.com/rss.xml
+  - https://www.youtube.com/feeds/videos.xml?channel_id=UCHnyfMqiRRG1u-2MsSQLbXA
+google_news_keywords: George Hotz,ChatGPT,Copenhagen 
+instapaper: true 
+weather_latitude: 37.77
+weather_longitude: 122.41
+terminal_mode: false
+```
