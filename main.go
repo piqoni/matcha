@@ -2,8 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"errors"
-	"flag"
 	"fmt"
 	"log"
 	"net/url"
@@ -14,13 +12,17 @@ import (
 
 	"github.com/mmcdole/gofeed"
 	"github.com/savioxavier/termlink"
-	"github.com/spf13/viper"
 	_ "modernc.org/sqlite"
 )
 
 var path string
 var terminal_mode bool = false
 var currentDate = time.Now().Format("2006-01-02")
+var lat float64
+var lon float64
+var instapaper bool
+var myMap []RSS
+var db *sql.DB
 
 type RSS struct {
 	url      string
@@ -84,80 +86,16 @@ func writeToMarkdown(body string) {
 	}
 }
 
-func main() {
-	currentDir, direrr := os.Getwd()
-	if direrr != nil {
-		log.Println(direrr)
-	}
-	generateConfigFile(currentDir)
-	viper.SetConfigName("config")
-	viper.AddConfigPath(".")
-	err := viper.ReadInConfig()
+func parseFeedURL(fp *gofeed.Parser, url string) *gofeed.Feed {
+	feed, err := fp.ParseURL(url)
 	if err != nil {
-		fmt.Print(err)
-		panic("Error reading config.yaml file. Please create config.yaml file.")
+		return nil
 	}
+	return feed
+}
 
-	if viper.IsSet("markdown_dir_path") {
-		path = viper.Get("markdown_dir_path").(string)
-	} else {
-		path = currentDir
-	}
-
-	myMap := []RSS{}
-	feeds := viper.Get("feeds")
-	lat := viper.Get("weather_latitude").(float64)
-	lon := viper.Get("weather_longitude").(float64)
-	googleNewsKeywords := url.QueryEscape(viper.Get("google_news_keywords").(string))
-
-	var limit int
-	for _, feed := range feeds.([]any) {
-		chopped := strings.Split(feed.(string), " ")
-		if len(chopped) > 1 {
-			limit, err = strconv.Atoi(chopped[1])
-			if err != nil {
-				check(err)
-			}
-		} else {
-			limit = 10
-		}
-
-		myMap = append(myMap, RSS{url: chopped[0], limit: limit})
-	}
-	if googleNewsKeywords != "" {
-		googleNewsUrl := "https://news.google.com/rss/search?hl=en-US&gl=US&ceid=US%3Aen&oc=11&q=" + strings.Join(strings.Split(googleNewsKeywords, "%2C"), "%20%7C%20")
-		myMap = append(myMap, RSS{url: googleNewsUrl, limit: 15}) // #FIXME make it configurable
-	}
-	instapaper := viper.GetBool("instapaper")
-	terminal_mode = viper.GetBool("terminal_mode")
-
-	// if -t parameter is passed overwrite terminal_mode setting in config.yml
-	flag.BoolVar(&terminal_mode, "t", terminal_mode, "run in terminal mode")
-	flag.Parse()
-
-	dbPath, err := os.UserConfigDir()
-	check(err)
-
-	if _, err := os.Stat(dbPath + "/brew"); errors.Is(err, os.ErrNotExist) {
-		err := os.Mkdir(dbPath+"/brew", os.ModePerm)
-		if err != nil {
-			check(err)
-		}
-	}
-
-	db, err := sql.Open("sqlite", dbPath+"/brew/matcha.db")
-	check(err)
-	// create new table on database
-	_, err = db.Exec("CREATE TABLE IF NOT EXISTS seen (url TEXT, date TEXT)")
-	check(err)
-	defer db.Close()
-
-	if !terminal_mode {
-		err := os.Remove(path + "/" + currentDate + ".md")
-		if err != nil {
-			// fmt.Println("INFO: Coudn't remove old file: ", err)
-		}
-	}
+func main() {
+	bootstrapConfig()
 
 	// Start writing to markdown
 	// Display weather
@@ -168,11 +106,7 @@ func main() {
 		if rss.disabled {
 			continue
 		}
-		feed, err := fp.ParseURL(rss.url)
-		if err != nil {
-			fmt.Println(err)
-			fmt.Println("Failed to parse feed: " + rss.url)
-		}
+		feed := parseFeedURL(fp, rss.url)
 
 		if feed == nil {
 			continue
@@ -238,6 +172,7 @@ func main() {
 			writeToMarkdown("### " + favicon(feed) + "  " + feed.Title + "\n")
 			writeToMarkdown(items)
 		}
+		defer db.Close()
 
 	}
 }
