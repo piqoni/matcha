@@ -1,4 +1,22 @@
-# 🍵 Matcha
+<div align="center"><p>
+    <a href="https://github.com/piqoni/matcha/releases/latest">
+      <img alt="Latest release" src="https://img.shields.io/github/v/release/piqoni/matcha?style=for-the-badge&logo=starship&color=C9CBFF&logoColor=D9E0EE&labelColor=302D41" />
+    </a>
+    <a href="https://github.com/piqoni/matcha/pulse">
+      <img alt="Last commit" src="https://img.shields.io/github/last-commit/piqoni/matcha?style=for-the-badge&logo=starship&color=8bd5ca&logoColor=D9E0EE&labelColor=302D41"/>
+    </a>
+    <a href="https://github.com/piqoni/matcha/blob/main/LICENSE">
+      <img alt="License" src="https://img.shields.io/github/license/piqoni/matcha?style=for-the-badge&logo=starship&color=ee999f&logoColor=D9E0EE&labelColor=302D41" />
+    </a>
+    <a href="https://github.com/piqoni/matcha/stargazers">
+      <img alt="Stars" src="https://img.shields.io/github/stars/piqoni/matcha?style=for-the-badge&logo=starship&color=c69ff5&logoColor=D9E0EE&labelColor=302D41" />
+    </a>
+    <a href="https://github.com/piqoni/matcha">
+      <img alt="Repo Size" src="https://img.shields.io/github/repo-size/piqoni/matcha?color=%23DDB6F2&label=SIZE&logo=codesandbox&style=for-the-badge&logoColor=D9E0EE&labelColor=302D41" />
+    </a>
+</div>
+
+<h1 align="center"> 🍵 Matcha </h1>
 Matcha is a daily digest generator for your RSS feeds and interested topics/keywords. By using any markdown file viewer (such as [Obsidian](https://obsidian.md/)), you can read your RSS articles whenever you want at your pace, thus avoiding FOMO throughout the day. 
 
 <img width="900" alt="image" src="https://user-images.githubusercontent.com/3144671/206862015-9a325a14-cd8b-4ac3-97bc-55c81008c0df.png">
