@@ -18,8 +18,7 @@ import (
 var path string
 var terminal_mode bool = false
 var currentDate = time.Now().Format("2006-01-02")
-var lat float64
-var lon float64
+var lat, lon float64
 var instapaper bool
 var myMap []RSS
 var db *sql.DB

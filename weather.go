@@ -18,7 +18,7 @@ func (c *UserAgentTransport) RoundTrip(r *http.Request) (*http.Response, error) 
 	return c.RoundTripper.RoundTrip(r)
 }
 
-func getWeather(lat float64, lon float64) string {
+func getWeather(lat, lon float64) string {
 	client := &http.Client{
 		Transport: &UserAgentTransport{http.DefaultTransport},
 	}
