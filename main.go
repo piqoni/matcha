@@ -100,8 +100,11 @@ func parseFeedURL(fp *gofeed.Parser, url string) {
 	feed, err := fp.ParseURL(url)
 	if err == nil {
 		feeds <- feed
-		wg.Done()
+	} else {
+		log.Println("Cound not parse: " + url)
+		log.Println(err)
 	}
+	wg.Done()
 }
 
 func main() {
@@ -111,7 +114,6 @@ func main() {
 	writeToMarkdown(getWeather(lat, lon))
 
 	feeds = make(chan *gofeed.Feed, len(myMap))
-
 	wg.Add(len(myMap))
 	// Set up a slice to store the parsed feeds
 	var parsedFeeds []*gofeed.Feed
