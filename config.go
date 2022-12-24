@@ -2,9 +2,11 @@ package main
 
 import (
 	"database/sql"
+	"encoding/xml"
 	"errors"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/url"
 	"os"
@@ -81,6 +83,24 @@ func bootstrapConfig() {
 		googleNewsUrl := "https://news.google.com/rss/search?hl=en-US&gl=US&ceid=US%3Aen&oc=11&q=" + strings.Join(strings.Split(googleNewsKeywords, "%2C"), "%20%7C%20")
 		myMap = append(myMap, RSS{url: googleNewsUrl, limit: 15}) // #FIXME make it configurable
 	}
+
+	// Import any config.opml file on current direcot
+	configPath := currentDir + "/" + "config.opml"
+	if _, err := os.Stat(configPath); err == nil {
+		o := Opml{}
+		xmlContent, _ := ioutil.ReadFile(currentDir + "/" + "config.opml")
+		err := xml.Unmarshal(xmlContent, &o)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			for _, outline := range o.Body.Outline {
+				for _, feed := range outline.Outline {
+					myMap = append(myMap, RSS{url: feed.XmlUrl, limit: limit})
+				}
+			}
+		}
+	}
+
 	instapaper = viper.GetBool("instapaper")
 
 	// Overwrite terminal_mode from config file only if its not set through -t flag
@@ -125,4 +145,5 @@ func generateConfigFile(currentDir string) {
 			log.Fatal(err)
 		}
 	}
+
 }

@@ -2,5 +2,6 @@
 
 /bin/
 config.yaml
+config.opml
 *.md
 matcha
