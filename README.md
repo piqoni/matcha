@@ -56,3 +56,5 @@ weather_latitude: 37.77
 weather_longitude: 122.41
 terminal_mode: false
 ```
+#### OPML Import
+To use OPML files (exported from other services), rename your file to `config.opml` and leave it in the directory where matcha is located.
