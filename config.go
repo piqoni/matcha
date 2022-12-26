@@ -29,6 +29,22 @@ weather_latitude: 37.77
 weather_longitude: 122.41
 terminal_mode: false`
 
+func parseOPML(xmlContent []byte) []RSS {
+	o := Opml{}
+	OpmlSlice := []RSS{}
+	err := xml.Unmarshal(xmlContent, &o)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		for _, outline := range o.Body.Outline {
+			for _, feed := range outline.Outline {
+				OpmlSlice = append(OpmlSlice, RSS{url: feed.XmlUrl, limit: 20})
+			}
+		}
+	}
+	return OpmlSlice
+}
+
 func bootstrapConfig() {
 	currentDir, direrr := os.Getwd()
 	if direrr != nil {
@@ -74,7 +90,7 @@ func bootstrapConfig() {
 				check(err)
 			}
 		} else {
-			limit = 10
+			limit = 20
 		}
 
 		myMap = append(myMap, RSS{url: chopped[0], limit: limit})
@@ -87,18 +103,8 @@ func bootstrapConfig() {
 	// Import any config.opml file on current direcot
 	configPath := currentDir + "/" + "config.opml"
 	if _, err := os.Stat(configPath); err == nil {
-		o := Opml{}
 		xmlContent, _ := ioutil.ReadFile(currentDir + "/" + "config.opml")
-		err := xml.Unmarshal(xmlContent, &o)
-		if err != nil {
-			fmt.Println(err)
-		} else {
-			for _, outline := range o.Body.Outline {
-				for _, feed := range outline.Outline {
-					myMap = append(myMap, RSS{url: feed.XmlUrl, limit: limit})
-				}
-			}
-		}
+		myMap = append(myMap, parseOPML(xmlContent)...)
 	}
 
 	instapaper = viper.GetBool("instapaper")
