@@ -35,12 +35,20 @@ func check(e error) {
 	}
 }
 
-func writeLink(title string, url string) string {
+func writeLink(title string, url string, newline bool) string {
+	var content string
 	if terminal_mode {
-		return termlink.Link(title, url)
+		content = termlink.Link(title, url)
+		if newline {
+			content += "\n"
+		}
 	} else {
-		return "[" + title + "](" + url + ")"
+		content = "[" + title + "](" + url + ")"
+		if newline {
+			content += "<br>"
+		}
 	}
+	return content
 }
 
 func favicon(s *gofeed.Feed) string {
@@ -147,9 +155,9 @@ func main() {
 				comments_number := strings.Replace(item.Description[first_comments_index:], "</p>\n", "", -1)
 				comments_number_int, _ := strconv.Atoi(comments_number)
 				if comments_number_int < 100 {
-					items += writeLink("💬 ", comments_url)
+					items += writeLink("💬 ", comments_url, false)
 				} else {
-					items += writeLink("🔥 ", comments_url)
+					items += writeLink("🔥 ", comments_url, false)
 				}
 			}
 			if instapaper && !terminal_mode {
@@ -159,16 +167,15 @@ func main() {
 			title := item.Title
 			link := item.Link
 
-			// Mastodon RSS has no Title, use Description instead
+			// Support RSS with no Title (such as Mastdon), use Description instead
 			if title == "" {
 				title = stripHtmlRegex(item.Description)
 			}
-			items += writeLink(title, link)
-			items += "\n"
+			items += writeLink(title, link, true)
 		}
 
 		if items != "" {
-			writeToMarkdown("### " + favicon(feed) + "  " + feed.Title + "\n")
+			writeToMarkdown("\n### " + favicon(feed) + "  " + feed.Title + "\n")
 			writeToMarkdown(items)
 		}
 		defer db.Close()

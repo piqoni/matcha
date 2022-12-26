@@ -1,7 +1,8 @@
 .vscode/
+.obsidian/
+*.md
 
 /bin/
 config.yaml
 config.opml
-*.md
 matcha
