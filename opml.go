@@ -18,6 +18,9 @@ type Opml struct {
 			Text     string `xml:",chardata"`
 			AttrText string `xml:"text,attr"`
 			Title    string `xml:"title,attr"`
+			Type     string `xml:"type,attr"`
+			XmlUrl   string `xml:"xmlUrl,attr"`
+			HtmlUrl  string `xml:"htmlUrl,attr"`
 			Outline  []struct {
 				Text     string `xml:",chardata"`
 				Type     string `xml:"type,attr"`

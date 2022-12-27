@@ -1,5 +1,6 @@
 .vscode/
 .obsidian/
+.DS_Store
 *.md
 
 /bin/
