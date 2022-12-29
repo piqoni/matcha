@@ -32,9 +32,10 @@ terminal_mode: false`
 func parseOPML(xmlContent []byte) []RSS {
 	o := Opml{}
 	OpmlSlice := []RSS{}
-	err := xml.Unmarshal(xmlContent, &o)
-	if err != nil {
-		fmt.Println(err)
+	decoder := xml.NewDecoder(strings.NewReader(string(xmlContent)))
+	decoder.Strict = false
+	if err := decoder.Decode(&o); err != nil {
+		log.Println(err)
 	}
 	for _, outline := range o.Body.Outline {
 		OpmlSlice = append(OpmlSlice, RSS{url: outline.XmlUrl, limit: 20})
