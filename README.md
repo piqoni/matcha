@@ -58,3 +58,6 @@ terminal_mode: false
 ```
 #### OPML Import
 To use OPML files (exported from other services), rename your file to `config.opml` and leave it in the directory where matcha is located.
+#### OS configuration notes
+##### Windows
+For `markdown_dir_path` use forward slash separators, for example: `/c/somedir/another`
