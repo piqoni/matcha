@@ -38,12 +38,12 @@ func getWeather(lat, lon float64) string {
 
 	var temperature float64 = res.Properties.Timeseries[0].Data.Instant.Details.AirTemperature
 	var next_12_hours string = res.Properties.Timeseries[0].Data.Next12Hours.Summary.SymbolCode
-	var weatherEmoji string = determineWeatherEmorji(next_12_hours)
+	var weatherEmoji string = determineWeatherEmoji(next_12_hours)
 	return fmt.Sprintf("# %d°C %s ️\n", int(temperature+0.5), weatherEmoji)
 
 }
 
-func determineWeatherEmorji(desc string) string {
+func determineWeatherEmoji(desc string) string {
 	switch {
 	case strings.Contains(desc, "cloudy") || strings.Contains(desc, "partlycloudy_day"):
 		return "☁️"
