@@ -1,4 +1,4 @@
-<img align="right" style="position:fixed" alt="GitHub Workflow Status (with branch)" src="https://img.shields.io/github/actions/workflow/status/piqoni/matcha/test.yml">
+<img align="right" src="https://github.com/piqoni/matcha/actions/workflows/test.yml/badge.svg">
 <h1 align="center"> 🍵 Matcha </h1>
 <div align="center"><p>
     <a href="https://github.com/piqoni/matcha/releases/latest">
@@ -18,7 +18,7 @@
     </a>
 </div>
 
-Matcha is a daily digest generator for your RSS feeds and interested topics/keywords. By using any markdown file viewer (such as [Obsidian](https://obsidian.md/)), you can read your RSS articles whenever you want at your pace, thus avoiding FOMO throughout the day. 
+Matcha is a daily digest generator for your RSS feeds and interested topics/keywords. By using any markdown file viewer (such as [Obsidian](https://obsidian.md/)) or directly from terminal (-t option), you can read your RSS articles whenever you want at your pace, thus avoiding FOMO throughout the day. 
 ### In Obsidian
 <img width="900" alt="image" src="https://user-images.githubusercontent.com/3144671/206862015-9a325a14-cd8b-4ac3-97bc-55c81008c0df.png">
 
