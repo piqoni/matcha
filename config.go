@@ -38,9 +38,13 @@ func parseOPML(xmlContent []byte) []RSS {
 		log.Println(err)
 	}
 	for _, outline := range o.Body.Outline {
-		OpmlSlice = append(OpmlSlice, RSS{url: outline.XmlUrl, limit: 20})
+		if outline.XmlUrl != "" {
+			OpmlSlice = append(OpmlSlice, RSS{url: outline.XmlUrl, limit: 20})
+		}
 		for _, feed := range outline.Outline {
-			OpmlSlice = append(OpmlSlice, RSS{url: feed.XmlUrl, limit: 20})
+			if feed.XmlUrl != "" {
+				OpmlSlice = append(OpmlSlice, RSS{url: feed.XmlUrl, limit: 20})
+			}
 		}
 	}
 	return OpmlSlice
