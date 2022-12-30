@@ -1,3 +1,4 @@
+<img align="right" style="position:fixed" alt="GitHub Workflow Status (with branch)" src="https://img.shields.io/github/actions/workflow/status/piqoni/matcha/test.yml">
 <h1 align="center"> 🍵 Matcha </h1>
 <div align="center"><p>
     <a href="https://github.com/piqoni/matcha/releases/latest">
