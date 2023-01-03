@@ -58,6 +58,7 @@ func bootstrapConfig() {
 	// if -t parameter is passed overwrite terminal_mode setting in config.yml
 	flag.BoolVar(&terminal_mode, "t", terminal_mode, "run in terminal mode")
 	configFile := flag.String("c", "", "Config file path (if you want to override the current directory config.yaml)")
+	opmlFile := flag.String("o", "", "OPML file path")
 	flag.Parse()
 
 	// if -c parameter is passed overwrite config.yaml setting in config.yaml
@@ -105,10 +106,15 @@ func bootstrapConfig() {
 		myMap = append(myMap, RSS{url: googleNewsUrl, limit: 15}) // #FIXME make it configurable
 	}
 
-	// Import any config.opml file on current direcot
+	// Import any config.opml file on current direcotory
 	configPath := currentDir + "/" + "config.opml"
 	if _, err := os.Stat(configPath); err == nil {
 		xmlContent, _ := ioutil.ReadFile(currentDir + "/" + "config.opml")
+		myMap = append(myMap, parseOPML(xmlContent)...)
+	}
+	// Append any opml file added by -o parameter
+	if len(*opmlFile) > 0 {
+		xmlContent, _ := ioutil.ReadFile(*opmlFile)
 		myMap = append(myMap, parseOPML(xmlContent)...)
 	}
 
