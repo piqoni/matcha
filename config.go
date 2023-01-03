@@ -57,22 +57,22 @@ func bootstrapConfig() {
 	}
 	// if -t parameter is passed overwrite terminal_mode setting in config.yml
 	flag.BoolVar(&terminal_mode, "t", terminal_mode, "run in terminal mode")
-	configDir := flag.String("c", "", "Config directory (if you dont want to use current dir")
+	configFile := flag.String("c", "", "Config file path (if you want to override the current directory config.yaml)")
 	flag.Parse()
-	if len(*configDir) > 0 {
-		viper.AddConfigPath(*configDir)
+
+	// if -c parameter is passed overwrite config.yaml setting in config.yaml
+	if len(*configFile) > 0 {
+		viper.SetConfigFile(*configFile)
 	} else {
 		viper.AddConfigPath(".")
+		generateConfigFile(currentDir)
+		viper.SetConfigName("config")
 	}
-
-	flag.Parse()
-	generateConfigFile(currentDir)
-	viper.SetConfigName("config")
 
 	err := viper.ReadInConfig()
 	if err != nil {
 		fmt.Print(err)
-		panic("Error reading config.yaml file. Please create config.yaml file.")
+		panic("Error reading yaml configuration file")
 	}
 
 	if viper.IsSet("markdown_dir_path") {
