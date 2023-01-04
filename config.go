@@ -83,10 +83,14 @@ func bootstrapConfig() {
 	}
 	myMap = []RSS{}
 	feeds := viper.Get("feeds")
-	lat = viper.Get("weather_latitude").(float64)
-	lon = viper.Get("weather_longitude").(float64)
-	googleNewsKeywords := url.QueryEscape(viper.Get("google_news_keywords").(string))
-	//var err error
+	if viper.IsSet("weather_latitude") {
+		lat = viper.Get("weather_latitude").(float64)
+		fmt.Println(lat)
+	}
+	if viper.IsSet("weather_longitude") {
+		lon = viper.Get("weather_longitude").(float64)
+	}
+
 	var limit int
 	for _, feed := range feeds.([]any) {
 		chopped := strings.Split(feed.(string), " ")
@@ -101,9 +105,13 @@ func bootstrapConfig() {
 
 		myMap = append(myMap, RSS{url: chopped[0], limit: limit})
 	}
-	if googleNewsKeywords != "" {
-		googleNewsUrl := "https://news.google.com/rss/search?hl=en-US&gl=US&ceid=US%3Aen&oc=11&q=" + strings.Join(strings.Split(googleNewsKeywords, "%2C"), "%20%7C%20")
-		myMap = append(myMap, RSS{url: googleNewsUrl, limit: 15}) // #FIXME make it configurable
+
+	if viper.IsSet("google_news_keywords") {
+		googleNewsKeywords := url.QueryEscape(viper.Get("google_news_keywords").(string))
+		if googleNewsKeywords != "" {
+			googleNewsUrl := "https://news.google.com/rss/search?hl=en-US&gl=US&ceid=US%3Aen&oc=11&q=" + strings.Join(strings.Split(googleNewsKeywords, "%2C"), "%20%7C%20")
+			myMap = append(myMap, RSS{url: googleNewsUrl, limit: 15}) // #FIXME make it configurable
+		}
 	}
 
 	// Import any config.opml file on current direcotory

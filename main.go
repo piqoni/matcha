@@ -105,8 +105,10 @@ func main() {
 	bootstrapConfig()
 
 	// Start writing to markdown
-	// Display weather
-	writeToMarkdown(getWeather(lat, lon))
+	// Display weather if lat and lon are set
+	if lat != 0 && lon != 0 {
+		writeToMarkdown(getWeather(lat, lon))
+	}
 
 	fp := gofeed.NewParser()
 	for _, rss := range myMap {
