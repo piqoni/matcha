@@ -59,7 +59,13 @@ func bootstrapConfig() {
 	flag.BoolVar(&terminal_mode, "t", terminal_mode, "run in terminal mode")
 	configFile := flag.String("c", "", "Config file path (if you want to override the current directory config.yaml)")
 	opmlFile := flag.String("o", "", "OPML file path")
+	build := flag.Bool("build", false, "dev: build")
 	flag.Parse()
+
+	if *build {
+		buildBinaries()
+		os.Exit(0)
+	}
 
 	// if -c parameter is passed overwrite config.yaml setting in config.yaml
 	if len(*configFile) > 0 {
