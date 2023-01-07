@@ -91,7 +91,6 @@ func bootstrapConfig() {
 	feeds := viper.Get("feeds")
 	if viper.IsSet("weather_latitude") {
 		lat = viper.Get("weather_latitude").(float64)
-		fmt.Println(lat)
 	}
 	if viper.IsSet("weather_longitude") {
 		lon = viper.Get("weather_longitude").(float64)
@@ -129,6 +128,12 @@ func bootstrapConfig() {
 	// Append any opml file added by -o parameter
 	if len(*opmlFile) > 0 {
 		xmlContent, _ := ioutil.ReadFile(*opmlFile)
+		myMap = append(myMap, parseOPML(xmlContent)...)
+	}
+
+	// Append opml file from config.yml
+	if viper.IsSet("opml_file_path") {
+		xmlContent, _ := ioutil.ReadFile(viper.Get("opml_file_path").(string))
 		myMap = append(myMap, parseOPML(xmlContent)...)
 	}
 
