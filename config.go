@@ -60,7 +60,7 @@ func bootstrapConfig() {
 		log.Println(direrr)
 	}
 	// if -t parameter is passed overwrite terminal_mode setting in config.yml
-	flag.BoolVar(&terminal_mode, "t", terminal_mode, "run in terminal mode")
+	flag.BoolVar(&terminal_mode, "t", terminal_mode, "Run Matcha in Terminal Mode, no markdown files will be created")
 	configFile := flag.String("c", "", "Config file path (if you want to override the current directory config.yaml)")
 	opmlFile := flag.String("o", "", "OPML file path to append feeds from opml files")
 	build := flag.Bool("build", false, "Dev: Build matcha binaries in the bin directory")
