@@ -60,8 +60,6 @@ markdown_file_suffix:
 ### Command line Options
 Run matcha with --help option to see current cli options:
 ```
-  -build
-    	Dev: Build matcha binaries in the bin directory
   -c string
     	Config file path (if you want to override the current directory config.yaml)
   -o string
