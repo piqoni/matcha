@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -84,9 +85,9 @@ func bootstrapConfig() {
 	}
 
 	if viper.IsSet("markdown_dir_path") {
-		path = viper.Get("markdown_dir_path").(string)
+		markdown_dir_path = viper.Get("markdown_dir_path").(string)
 	} else {
-		path = currentDir
+		markdown_dir_path = currentDir
 	}
 	myMap = []RSS{}
 	feeds := viper.Get("feeds")
@@ -162,7 +163,7 @@ func bootstrapConfig() {
 	check(err)
 
 	if !terminal_mode {
-		err := os.Remove(path + "/" + currentDate + ".md")
+		err := os.Remove(filepath.Join(markdown_dir_path, currentDate+".md"))
 		if err != nil {
 			// fmt.Println("INFO: Coudn't remove old file: ", err)
 		}
