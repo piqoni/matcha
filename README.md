@@ -61,12 +61,12 @@ markdown_file_suffix:
 Run matcha with --help option to see current cli options:
 ```
   -build
-        dev: build
+    	Dev: Build matcha binaries in the bin directory
   -c string
-        Config file path (if you want to override the current directory config.yaml)
+    	Config file path (if you want to override the current directory config.yaml)
   -o string
-        OPML file path
-  -t    run in terminal mode
+    	OPML file path to append feeds from opml files
+  -t	Run Matcha in Terminal Mode, no markdown files will be created
 ```  
 
 #### OPML Import
