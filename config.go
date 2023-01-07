@@ -27,7 +27,8 @@ google_news_keywords: George Hotz,ChatGPT,Copenhagen
 instapaper: true 
 weather_latitude: 37.77
 weather_longitude: 122.41
-terminal_mode: false`
+terminal_mode: false
+opml_file_path: `
 
 func parseOPML(xmlContent []byte) []RSS {
 	o := Opml{}
