@@ -53,9 +53,23 @@ instapaper: true
 weather_latitude: 37.77
 weather_longitude: 122.41
 terminal_mode: false
+opml_file_path: 
 ```
+### Command line Options
+Run matcha with --help option to see current cli options:
+```
+  -build
+        dev: build
+  -c string
+        Config file path (if you want to override the current directory config.yaml)
+  -o string
+        OPML file path
+  -t    run in terminal mode
+```  
+
 #### OPML Import
-To use OPML files (exported from other services), rename your file to `config.opml` and leave it in the directory where matcha is located.
+To use OPML files (exported from other services), rename your file to `config.opml` and leave it in the directory where matcha is located. The other option is to run the command with -o option pointing to the opml filepath. 
+
 #### OS-specific configuration notes
 ##### Windows
 For `markdown_dir_path` use forward slash separators, for example: `/c/somedir/another`
