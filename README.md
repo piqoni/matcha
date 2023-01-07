@@ -60,9 +60,9 @@ markdown_file_suffix:
 ### Command line Options
 Run matcha with --help option to see current cli options:
 ```
-  -c string
+  -c filepath
     	Config file path (if you want to override the current directory config.yaml)
-  -o string
+  -o filepath
     	OPML file path to append feeds from opml files
   -t	Run Matcha in Terminal Mode, no markdown files will be created
 ```  
