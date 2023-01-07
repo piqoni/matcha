@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/mmcdole/gofeed"
@@ -25,8 +24,6 @@ var lat, lon float64
 var instapaper bool
 var myMap []RSS
 var db *sql.DB
-var feeds chan *gofeed.Feed
-var wg sync.WaitGroup
 
 type RSS struct {
 	url      string
@@ -36,7 +33,7 @@ type RSS struct {
 
 func check(e error) {
 	if e != nil {
-		log.Fatal(e)
+		panic(e)
 	}
 }
 
@@ -99,46 +96,37 @@ func writeToMarkdown(body string) {
 	}
 }
 
-func parseFeedURL(fp *gofeed.Parser, url string) {
+func parseFeedURL(fp *gofeed.Parser, url string) *gofeed.Feed {
 	feed, err := fp.ParseURL(url)
-	if err == nil {
-		feeds <- feed
-	} else {
-		log.Println("Cound not parse: " + url)
-		log.Println(err)
+	if err != nil {
+		return nil
 	}
-	wg.Done()
+	return feed
 }
 
 func main() {
 	bootstrapConfig()
+
 	// Start writing to markdown
 	// Display weather if lat and lon are set
 	if lat != 0 && lon != 0 {
 		writeToMarkdown(getWeather(lat, lon))
 	}
 
-	feeds = make(chan *gofeed.Feed, len(myMap))
-	wg.Add(len(myMap))
-	// Set up a slice to store the parsed feeds
-	var parsedFeeds []*gofeed.Feed
-
 	fp := gofeed.NewParser()
-	for _, feed := range myMap {
-		go parseFeedURL(fp, feed.url)
-	}
-	go func() {
-		for feed := range feeds {
-			parsedFeeds = append(parsedFeeds, feed)
+	for _, rss := range myMap {
+		if rss.disabled {
+			continue
 		}
-	}()
-	wg.Wait()
+		feed := parseFeedURL(fp, rss.url)
 
-	for _, feed := range parsedFeeds {
+		if feed == nil {
+			continue
+		}
 
 		items := ""
 		for index, item := range feed.Items {
-			if index == 10 {
+			if index == rss.limit {
 				break
 			}
 			var url string
