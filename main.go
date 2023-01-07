@@ -17,6 +17,7 @@ import (
 )
 
 var markdown_dir_path string
+var mdPrefix, mdSuffix string
 var terminal_mode bool = false
 var currentDate = time.Now().Format("2006-01-02")
 var lat, lon float64
@@ -81,7 +82,8 @@ func writeToMarkdown(body string) {
 	if terminal_mode {
 		fmt.Println(body)
 	} else {
-		f, err := os.OpenFile(filepath.Join(markdown_dir_path, currentDate+".md"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		markdown_file_name := mdPrefix + currentDate + mdSuffix + ".md"
+		f, err := os.OpenFile(filepath.Join(markdown_dir_path, markdown_file_name), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
 			log.Fatal(err)
 		}
