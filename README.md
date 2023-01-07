@@ -54,6 +54,8 @@ weather_latitude: 37.77
 weather_longitude: 122.41
 terminal_mode: false
 opml_file_path: 
+markdown_file_prefix: 
+markdown_file_suffix: 
 ```
 ### Command line Options
 Run matcha with --help option to see current cli options:

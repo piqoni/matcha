@@ -29,7 +29,9 @@ instapaper: true
 weather_latitude: 37.77
 weather_longitude: 122.41
 terminal_mode: false
-opml_file_path: `
+opml_file_path: 
+markdown_file_prefix: 
+markdown_file_suffix: `
 
 func parseOPML(xmlContent []byte) []RSS {
 	o := Opml{}
@@ -97,6 +99,12 @@ func bootstrapConfig() {
 	if viper.IsSet("weather_longitude") {
 		lon = viper.Get("weather_longitude").(float64)
 	}
+	if viper.IsSet("markdown_file_prefix") {
+		mdPrefix = viper.Get("markdown_file_prefix").(string)
+	}
+	if viper.IsSet("markdown_file_suffix") {
+		mdSuffix = viper.Get("markdown_file_suffix").(string)
+	}
 
 	var limit int
 	for _, feed := range feeds.([]any) {
@@ -163,7 +171,8 @@ func bootstrapConfig() {
 	check(err)
 
 	if !terminal_mode {
-		err := os.Remove(filepath.Join(markdown_dir_path, currentDate+".md"))
+		markdown_file_name := mdPrefix + currentDate + mdSuffix + ".md"
+		err := os.Remove(filepath.Join(markdown_dir_path, markdown_file_name))
 		if err != nil {
 			// fmt.Println("INFO: Coudn't remove old file: ", err)
 		}
