@@ -24,8 +24,13 @@ func buildBinaries() {
 
 	// Build the binaries
 	for _, target := range targets {
+		filename := "bin/matcha-" + target.os + "-" + target.arch
+
 		fmt.Printf("Building for %s/%s...\n", target.os, target.arch)
-		cmd := exec.Command("go", "build", "-o", "bin/matcha-"+target.os+"-"+target.arch)
+		if target.os == "windows" {
+			filename += ".exe"
+		}
+		cmd := exec.Command("go", "build", "-o", filename)
 		cmd.Env = append(os.Environ(),
 			"GOOS="+target.os,
 			"GOARCH="+target.arch,
