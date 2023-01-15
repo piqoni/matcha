@@ -69,7 +69,3 @@ Run matcha with --help option to see current cli options:
 
 #### OPML Import
 To use OPML files (exported from other services), rename your file to `config.opml` and leave it in the directory where matcha is located. The other option is to run the command with -o option pointing to the opml filepath. 
-
-#### OS-specific configuration notes
-##### Windows
-For `markdown_dir_path` use forward slash separators, for example: `/c/somedir/another`
