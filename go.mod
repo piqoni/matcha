@@ -9,9 +9,16 @@ require (
 )
 
 require (
+	github.com/go-shiori/dom v0.0.0-20210627111528-4e4722cd0d65 // indirect
+	github.com/gogs/chardet v0.0.0-20191104214054-4b6791f73a28 // indirect
+	github.com/sirupsen/logrus v1.8.1 // indirect
+)
+
+require (
 	github.com/PuerkitoBio/goquery v1.5.1 // indirect
-	github.com/andybalholm/cascadia v1.1.0 // indirect
+	github.com/andybalholm/cascadia v1.2.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
+	github.com/go-shiori/go-readability v0.0.0-20220215145315-dd6828d2f09b
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
@@ -26,6 +33,7 @@ require (
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.1 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
+	github.com/sashabaranov/go-gpt3 v1.0.1
 	github.com/savioxavier/termlink v1.2.1 // indirect
 	github.com/spf13/afero v1.8.2 // indirect
 	github.com/spf13/cast v1.5.0 // indirect

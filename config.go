@@ -105,8 +105,20 @@ func bootstrapConfig() {
 	if viper.IsSet("markdown_file_suffix") {
 		mdSuffix = viper.Get("markdown_file_suffix").(string)
 	}
+	if viper.IsSet("openai_api_key") {
+		openaiApiKey = viper.Get("openai_api_key").(string)
+	}
 
-	var limit int
+	var limit = 20
+	if viper.IsSet("summary_feeds") {
+		summaryFeeds := viper.Get("summary_feeds")
+
+		for _, summaryFeed := range summaryFeeds.([]any) {
+
+			myMap = append(myMap, RSS{url: summaryFeed.(string), limit: limit, summarize: true})
+		}
+	}
+
 	for _, feed := range feeds.([]any) {
 		chopped := strings.Split(feed.(string), " ")
 		if len(chopped) > 1 {
@@ -114,8 +126,6 @@ func bootstrapConfig() {
 			if err != nil {
 				check(err)
 			}
-		} else {
-			limit = 20
 		}
 
 		myMap = append(myMap, RSS{url: chopped[0], limit: limit})
