@@ -17,7 +17,7 @@
 
 Matcha is a daily digest generator for your RSS feeds and interested topics/keywords. By using any markdown file viewer (such as [Obsidian](https://obsidian.md/)) or directly from terminal (-t option), you can read your RSS articles whenever you want at your pace, thus avoiding FOMO throughout the day. 
 ### In Obsidian
-<img width="900" alt="image" src="https://user-images.githubusercontent.com/3144671/206862015-9a325a14-cd8b-4ac3-97bc-55c81008c0df.png">
+<img width="900" alt="image" src="https://user-images.githubusercontent.com/3144671/219786799-55db70c1-5860-4d4b-9df4-b81a89f8161d.png">
 
 ### On the terminal 
 
@@ -25,6 +25,7 @@ Matcha is a daily digest generator for your RSS feeds and interested topics/keyw
 
 ## Features
  - RSS daily **digest**, it will show only articles not previously seen
+ - Summarized articles from OpenAI for selected feeds
  - Weather for the next 12 Hours (from [YR](https://www.yr.no/))
  - Quick bookmarking of articles to Instapaper
  - Interested Topics/Keywords to follow (through [Google News](https://news.google.com/))
@@ -56,6 +57,17 @@ terminal_mode: false
 opml_file_path: 
 markdown_file_prefix: 
 markdown_file_suffix: 
+openai_api_key: 
+summary_feeds: 
+```
+### GPT-3 Summary of Articles
+To use the summary feature, you need to an OpanAI account ([sign up here](https://openai.com/api/)) then get your API key [here](https://openai.com/api/).
+
+Then update the configuration with the feeds you want to be summarized under "summary_feeds" setting, example:
+```
+openai_api_key: xxxxxxxxxxxxxxxxx
+summary_feeds:
+    - http://hnrss.org/best
 ```
 ### Command line Options
 Run matcha with --help option to see current cli options:

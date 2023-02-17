@@ -22,13 +22,14 @@ var terminal_mode bool = false
 var currentDate = time.Now().Format("2006-01-02")
 var lat, lon float64
 var instapaper bool
+var openaiApiKey string
 var myMap []RSS
 var db *sql.DB
 
 type RSS struct {
-	url      string
-	limit    int
-	disabled bool
+	url       string
+	limit     int
+	summarize bool
 }
 
 func check(e error) {
@@ -48,6 +49,22 @@ func writeLink(title string, url string, newline bool) string {
 		content = "[" + title + "](" + url + ")"
 		if newline {
 			content += "<br>"
+		}
+	}
+	return content
+}
+
+func writeSummary(content string, newline bool) string {
+	if content == "" {
+		return content
+	}
+	if terminal_mode {
+		if newline {
+			content += "\n"
+		}
+	} else {
+		if newline {
+			content += "  \n\n"
 		}
 	}
 	return content
@@ -115,9 +132,6 @@ func main() {
 
 	fp := gofeed.NewParser()
 	for _, rss := range myMap {
-		if rss.disabled {
-			continue
-		}
 		feed := parseFeedURL(fp, rss.url)
 
 		if feed == nil {
@@ -172,11 +186,14 @@ func main() {
 			title := item.Title
 			link := item.Link
 
-			// Support RSS with no Title (such as Mastdon), use Description instead
+			// Support RSS with no Title (such as Mastodon), use Description instead
 			if title == "" {
 				title = stripHtmlRegex(item.Description)
 			}
 			items += writeLink(title, link, true)
+			if rss.summarize {
+				items += writeSummary(getSummaryFromLink(link), true)
+			}
 		}
 
 		if items != "" {
