@@ -56,6 +56,17 @@ terminal_mode: false
 opml_file_path: 
 markdown_file_prefix: 
 markdown_file_suffix: 
+openai_api_key: 
+summary_feeds: 
+```
+### GPT-3 Summary of Articles
+To use the summary feature, you need to an OpanAI account [Sign up here](https://openai.com/api/) then get your API key [here](https://openai.com/api/).
+
+Then update the configuration with the feeds you want to be summarized under "summary_feeds" setting, example:
+```
+openai_api_key: xxxxxxxxxxxxxxxxx
+summary_feeds:
+    - http://hnrss.org/best
 ```
 ### Command line Options
 Run matcha with --help option to see current cli options:
