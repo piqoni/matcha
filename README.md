@@ -60,7 +60,7 @@ openai_api_key:
 summary_feeds: 
 ```
 ### GPT-3 Summary of Articles
-To use the summary feature, you need to an OpanAI account [Sign up here](https://openai.com/api/) then get your API key [here](https://openai.com/api/).
+To use the summary feature, you need to an OpanAI account ([sign up here](https://openai.com/api/)) then get your API key [here](https://openai.com/api/).
 
 Then update the configuration with the feeds you want to be summarized under "summary_feeds" setting, example:
 ```
