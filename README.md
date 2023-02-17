@@ -21,7 +21,7 @@ Matcha is a daily digest generator for your RSS feeds and interested topics/keyw
 
 ### On the terminal 
 
-<img width="596" alt="image" src="https://user-images.githubusercontent.com/3144671/208323296-af2d6a51-7d33-42a9-a827-0e96a4a383fd.png">
+<img width="596" alt="image" src="https://user-images.githubusercontent.com/3144671/219786799-55db70c1-5860-4d4b-9df4-b81a89f8161d.png">
 
 ## Features
  - RSS daily **digest**, it will show only articles not previously seen

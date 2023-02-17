@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"strings"
 	"time"
 
 	readability "github.com/go-shiori/go-readability"
@@ -41,6 +42,11 @@ func summarize(text string) string {
 	resp, err := c.CreateCompletion(ctx, req)
 	if err != nil {
 		return ""
+	}
+
+	// append ... if text does not end with .
+	if !strings.HasSuffix(resp.Choices[0].Text, ".") {
+		resp.Choices[0].Text = resp.Choices[0].Text + "..."
 	}
 
 	return resp.Choices[0].Text
