@@ -48,7 +48,7 @@ func writeLink(title string, url string, newline bool) string {
 	} else {
 		content = "[" + title + "](" + url + ")"
 		if newline {
-			content += "<br>"
+			content += "\n"
 		}
 	}
 	return content
