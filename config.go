@@ -56,6 +56,19 @@ func parseOPML(xmlContent []byte) []RSS {
 	return OpmlSlice
 }
 
+func getFeedLimit(feedURL string) int {
+	var limit = 20 // default limit
+	chopped := strings.Split(feedURL, " ")
+	if len(chopped) > 1 {
+		var err error
+		limit, err = strconv.Atoi(chopped[1])
+		if err != nil {
+			check(err)
+		}
+	}
+	return limit
+}
+
 func bootstrapConfig() {
 	currentDir, direrr := os.Getwd()
 	if direrr != nil {
@@ -116,20 +129,13 @@ func bootstrapConfig() {
 		summaryFeeds := viper.Get("summary_feeds")
 
 		for _, summaryFeed := range summaryFeeds.([]any) {
-
+			limit = getFeedLimit(summaryFeed.(string))
 			myMap = append(myMap, RSS{url: summaryFeed.(string), limit: limit, summarize: true})
 		}
 	}
 
 	for _, feed := range feeds.([]any) {
-		chopped := strings.Split(feed.(string), " ")
-		if len(chopped) > 1 {
-			limit, err = strconv.Atoi(chopped[1])
-			if err != nil {
-				check(err)
-			}
-		}
-
+		limit = getFeedLimit(feed.(string))
 		myMap = append(myMap, RSS{url: chopped[0], limit: limit})
 	}
 
