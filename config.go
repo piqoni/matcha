@@ -183,9 +183,10 @@ func bootstrapConfig() {
 
 	db, err = sql.Open("sqlite", dbPath+"/brew/matcha.db")
 	check(err)
-	// create new table on database
-	_, err = db.Exec("CREATE TABLE IF NOT EXISTS seen (url TEXT, date TEXT)")
-	check(err)
+	err = applyMigrations(db)
+	if err != nil {
+		log.Println("Coudn't apply migrations:", err)
+	}
 
 	if !terminal_mode {
 		markdown_file_name := mdPrefix + currentDate + mdSuffix + ".md"
