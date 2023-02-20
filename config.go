@@ -56,7 +56,7 @@ func parseOPML(xmlContent []byte) []RSS {
 	return OpmlSlice
 }
 
-func getFeedLimit(feedURL string) int {
+func getFeedAndLimit(feedURL string) (string, int) {
 	var limit = 20 // default limit
 	chopped := strings.Split(feedURL, " ")
 	if len(chopped) > 1 {
@@ -66,7 +66,7 @@ func getFeedLimit(feedURL string) int {
 			check(err)
 		}
 	}
-	return limit
+	return chopped[0], limit
 }
 
 func bootstrapConfig() {
@@ -124,19 +124,18 @@ func bootstrapConfig() {
 		openaiApiKey = viper.Get("openai_api_key").(string)
 	}
 
-	var limit = 20
 	if viper.IsSet("summary_feeds") {
 		summaryFeeds := viper.Get("summary_feeds")
 
 		for _, summaryFeed := range summaryFeeds.([]any) {
-			limit = getFeedLimit(summaryFeed.(string))
-			myMap = append(myMap, RSS{url: summaryFeed.(string), limit: limit, summarize: true})
+			url, limit := getFeedAndLimit(summaryFeed.(string))
+			myMap = append(myMap, RSS{url: url, limit: limit, summarize: true})
 		}
 	}
 
 	for _, feed := range feeds.([]any) {
-		limit = getFeedLimit(feed.(string))
-		myMap = append(myMap, RSS{url: chopped[0], limit: limit})
+		url, limit := getFeedAndLimit(feed.(string))
+		myMap = append(myMap, RSS{url: url, limit: limit})
 	}
 
 	if viper.IsSet("google_news_keywords") {
