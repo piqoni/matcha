@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"log"
+	"fmt"
 	"strings"
 	"time"
 
@@ -13,7 +13,7 @@ import (
 func getSummaryFromLink(url string) string {
 	article, err := readability.FromURL(url, 30*time.Second)
 	if err != nil {
-		log.Fatalf("Failed to parse %s, %v\n", url, err)
+		fmt.Printf("Failed to parse %s, %v\n", url, err)
 	}
 
 	return summarize(article.TextContent)
