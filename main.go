@@ -145,10 +145,22 @@ func main() {
 			}
 			var url string
 			var date string
-			err := db.QueryRow("SELECT url, date FROM seen where url=?", item.Link).Scan(&url, &date)
+			var summary sql.NullString
+			var summaryValue string
+
+			title := item.Title
+			link := item.Link
+
+			err := db.QueryRow("SELECT url, date, summary FROM seen where url=?", item.Link).Scan(&url, &date, &summary)
 			if err != nil && err != sql.ErrNoRows {
 				fmt.Println(err)
 			}
+			if summary.Valid {
+				summaryValue = summary.String
+			} else {
+				summaryValue = ""
+			}
+
 			if url != "" && date == currentDate {
 				// fmt.Println("Already seen: " + item.Title)
 				// Article is already in the database and it is for today's date so skip inserting it
@@ -156,9 +168,14 @@ func main() {
 				// fmt.Println("Skipping: " + item.Link)
 				continue
 			} else {
-				stmt, err := db.Prepare("INSERT INTO seen(url, date) values(?,?)")
+				if rss.summarize {
+					summaryValue = getSummaryFromLink(link)
+				} else {
+					summaryValue = ""
+				}
+				stmt, err := db.Prepare("INSERT INTO seen(url, date, summary) values(?,?,?)")
 				check(err)
-				res, err := stmt.Exec(item.Link, currentDate)
+				res, err := stmt.Exec(item.Link, currentDate, summaryValue)
 				check(err)
 				_ = res
 				stmt.Close()
@@ -183,16 +200,13 @@ func main() {
 				items += "[<img height=\"16\" src=\"https://staticinstapaper.s3.dualstack.us-west-2.amazonaws.com/img/favicon.png\">](https://www.instapaper.com/hello2?url=" + item.Link + ")"
 			}
 
-			title := item.Title
-			link := item.Link
-
 			// Support RSS with no Title (such as Mastodon), use Description instead
 			if title == "" {
 				title = stripHtmlRegex(item.Description)
 			}
 			items += writeLink(title, link, true)
 			if rss.summarize {
-				items += writeSummary(getSummaryFromLink(link), true)
+				items += writeSummary(summaryValue, true)
 			}
 		}
 
