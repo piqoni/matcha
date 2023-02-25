@@ -31,7 +31,8 @@ weather_longitude: 122.41
 terminal_mode: false
 opml_file_path: 
 markdown_file_prefix: 
-markdown_file_suffix: 
+markdown_file_suffix:
+reading_time: false 
 openai_api_key: 
 summary_feeds: `
 
@@ -165,6 +166,7 @@ func bootstrapConfig() {
 	}
 
 	instapaper = viper.GetBool("instapaper")
+	reading_time = viper.GetBool("reading_time")
 
 	// Overwrite terminal_mode from config file only if its not set through -t flag
 	if !terminal_mode {
