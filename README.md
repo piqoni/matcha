@@ -57,6 +57,7 @@ terminal_mode: false
 opml_file_path: 
 markdown_file_prefix: 
 markdown_file_suffix: 
+reading_time: false
 openai_api_key: 
 summary_feeds: 
 ```

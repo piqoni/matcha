@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	readability "github.com/go-shiori/go-readability"
 	"github.com/mmcdole/gofeed"
 	"github.com/savioxavier/termlink"
 	_ "modernc.org/sqlite"
@@ -23,6 +24,7 @@ var currentDate = time.Now().Format("2006-01-02")
 var lat, lon float64
 var instapaper bool
 var openaiApiKey string
+var reading_time bool
 var myMap []RSS
 var db *sql.DB
 
@@ -38,20 +40,39 @@ func check(e error) {
 	}
 }
 
-func writeLink(title string, url string, newline bool) string {
+func writeLink(title string, url string, newline bool, readingTime string) string {
 	var content string
 	if terminal_mode {
 		content = termlink.Link(title, url)
-		if newline {
-			content += "\n"
-		}
 	} else {
 		content = "[" + title + "](" + url + ")"
-		if newline {
-			content += "\n"
-		}
+	}
+	if readingTime != "" {
+		content += " (" + readingTime + ")"
+	}
+	if newline {
+		content += "\n"
 	}
 	return content
+}
+
+func getReadingTime(link string) string {
+	article, err := readability.FromURL(link, 30*time.Second)
+	if err != nil {
+		return "" // Just dont display any reading time if can't get the article text
+	}
+
+	// get number of words in a string
+	words := strings.Fields(article.TextContent)
+
+	// assuming average reading time is 200 words per minute calculate reading time of the article
+	readingTime := float64(len(words)) / float64(200)
+
+	// round it to full integer minutes
+	minutes := int(readingTime)
+
+	// concatenate the minutes to a string and return
+	return strconv.Itoa(minutes) + " min"
 }
 
 func writeSummary(content string, newline bool) string {
@@ -147,6 +168,7 @@ func main() {
 			var date string
 			var summary sql.NullString
 			var summaryValue string
+			var timeInMin string
 
 			title := item.Title
 			link := item.Link
@@ -191,9 +213,9 @@ func main() {
 				comments_number := strings.Replace(item.Description[first_comments_index:], "</p>\n", "", -1)
 				comments_number_int, _ := strconv.Atoi(comments_number)
 				if comments_number_int < 100 {
-					items += writeLink("💬 ", comments_url, false)
+					items += writeLink("💬 ", comments_url, false, "")
 				} else {
-					items += writeLink("🔥 ", comments_url, false)
+					items += writeLink("🔥 ", comments_url, false, "")
 				}
 			}
 			if instapaper && !terminal_mode {
@@ -204,7 +226,12 @@ func main() {
 			if title == "" {
 				title = stripHtmlRegex(item.Description)
 			}
-			items += writeLink(title, link, true)
+			if reading_time {
+				timeInMin = getReadingTime(link)
+			} else {
+				timeInMin = ""
+			}
+			items += writeLink(title, link, true, timeInMin)
 			if rss.summarize {
 				items += writeSummary(summaryValue, true)
 			}
