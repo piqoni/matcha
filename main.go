@@ -67,11 +67,8 @@ func getReadingTime(link string) string {
 
 	// assuming average reading time is 200 words per minute calculate reading time of the article
 	readingTime := float64(len(words)) / float64(200)
-
-	// round it to full integer minutes
 	minutes := int(readingTime)
 
-	// concatenate the minutes to a string and return
 	return strconv.Itoa(minutes) + " min"
 }
 
