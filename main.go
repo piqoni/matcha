@@ -69,6 +69,11 @@ func getReadingTime(link string) string {
 	readingTime := float64(len(words)) / float64(200)
 	minutes := int(readingTime)
 
+	// if minutes is zero return an empty string
+	if minutes == 0 {
+		return ""
+	}
+
 	return strconv.Itoa(minutes) + " min"
 }
 
