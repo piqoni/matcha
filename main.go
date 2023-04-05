@@ -147,7 +147,6 @@ func parseFeedURL(fp *gofeed.Parser, url string) *gofeed.Feed {
 func main() {
 	bootstrapConfig()
 
-	// Start writing to markdown
 	// Display weather if lat and lon are set
 	if lat != 0 && lon != 0 {
 		writeToMarkdown(getWeather(lat, lon))
@@ -155,95 +154,156 @@ func main() {
 
 	fp := gofeed.NewParser()
 	for _, rss := range myMap {
-		feed := parseFeedURL(fp, rss.url)
+		feed := parseFeed(fp, rss.url, rss.limit)
 
 		if feed == nil {
 			continue
 		}
 
-		items := ""
-		for index, item := range feed.Items {
-			if index == rss.limit {
-				break
-			}
-			var url string
-			var date string
-			var summary sql.NullString
-			var summaryValue string
-			var timeInMin string
-
-			title := item.Title
-			link := item.Link
-
-			err := db.QueryRow("SELECT url, date, summary FROM seen where url=?", item.Link).Scan(&url, &date, &summary)
-			if err != nil && err != sql.ErrNoRows {
-				fmt.Println(err)
-			}
-			if summary.Valid {
-				summaryValue = summary.String
-			} else {
-				summaryValue = ""
-			}
-
-			if url != "" && date == currentDate {
-				// fmt.Println("Already seen: " + item.Title)
-				// Article is already in the database and it is for today's date so skip inserting it
-			} else if url != "" && date != currentDate {
-				// fmt.Println("Skipping: " + item.Link)
-				continue
-			} else {
-				if rss.summarize {
-					summaryValue = getSummaryFromLink(link)
-				} else {
-					summaryValue = ""
-				}
-				stmt, err := db.Prepare("INSERT INTO seen(url, date, summary) values(?,?,?)")
-				check(err)
-				res, err := stmt.Exec(item.Link, currentDate, summaryValue)
-				check(err)
-				_ = res
-				stmt.Close()
-			}
-
-			if strings.Contains(feed.Title, "Hacker News") {
-				// Find Comments URL
-				first_index := strings.Index(item.Description, "Comments URL") + 23
-				comments_url := item.Description[first_index : first_index+45]
-				// Find Comments number
-				first_comments_index := strings.Index(item.Description, "Comments:") + 10
-				// replace </p> with empty string
-				comments_number := strings.Replace(item.Description[first_comments_index:], "</p>\n", "", -1)
-				comments_number_int, _ := strconv.Atoi(comments_number)
-				if comments_number_int < 100 {
-					items += writeLink("💬 ", comments_url, false, "")
-				} else {
-					items += writeLink("🔥 ", comments_url, false, "")
-				}
-			}
-			if instapaper && !terminal_mode {
-				items += "[<img height=\"16\" src=\"https://staticinstapaper.s3.dualstack.us-west-2.amazonaws.com/img/favicon.png\">](https://www.instapaper.com/hello2?url=" + item.Link + ")"
-			}
-
-			// Support RSS with no Title (such as Mastodon), use Description instead
-			if title == "" {
-				title = stripHtmlRegex(item.Description)
-			}
-			if reading_time {
-				timeInMin = getReadingTime(link)
-			} else {
-				timeInMin = ""
-			}
-			items += writeLink(title, link, true, timeInMin)
-			if rss.summarize {
-				items += writeSummary(summaryValue, true)
-			}
-		}
-
+		items := generateFeedItems(feed, &rss)
 		if items != "" {
-			writeToMarkdown("\n### " + favicon(feed) + "  " + feed.Title + "\n")
-			writeToMarkdown(items)
+			writeFeedToMarkdown(feed, items)
 		}
-		defer db.Close()
-
 	}
+
+	// Close the database connection after processing all the feeds
+	defer db.Close()
+}
+
+// Parses the feed URL and returns the feed object
+func parseFeed(fp *gofeed.Parser, url string, limit int) *gofeed.Feed {
+	feed, err := fp.ParseURL(url)
+	if err != nil {
+		fmt.Printf("Error parsing %s with error: %s", url, err)
+		return nil
+	}
+
+	if len(feed.Items) > limit {
+		feed.Items = feed.Items[:limit]
+	}
+
+	return feed
+}
+
+// Generates the feed items and returns them as a string
+func generateFeedItems(feed *gofeed.Feed, rss *RSS) string {
+	var items string
+
+	for _, item := range feed.Items {
+		seen, seen_today, summary := isSeenArticle(item)
+		if seen {
+			continue
+		}
+		title, link := getFeedTitleAndLink(item)
+		if summary == "" {
+			summary = getSummary(rss, item, link)
+		}
+		// Add the comments link if it's a Hacker News feed
+		if strings.Contains(feed.Title, "Hacker News") {
+			commentsLink, commentsCount := getCommentsInfo(item)
+			if commentsCount < 100 {
+				items += writeLink("💬 ", commentsLink, false, "")
+			} else {
+				items += writeLink("🔥 ", commentsLink, false, "")
+			}
+		}
+
+		// Add the Instapaper link if enabled
+		if instapaper && !terminal_mode {
+			items += getInstapaperLink(item.Link)
+		}
+
+		// Support RSS with no Title (such as Mastodon), use Description instead
+		if title == "" {
+			title = stripHtmlRegex(item.Description)
+		}
+
+		timeInMin := ""
+		if reading_time {
+			timeInMin = getReadingTime(link)
+		}
+
+		items += writeLink(title, link, true, timeInMin)
+		if rss.summarize {
+			items += writeSummary(summary, true)
+		}
+
+		// Add the item to the seen table if not seen today
+		if !seen_today {
+			addToSeenTable(item.Link, summary)
+		}
+	}
+
+	return items
+}
+
+// Writes the feed and its items to the markdown file
+func writeFeedToMarkdown(feed *gofeed.Feed, items string) {
+	writeToMarkdown(fmt.Sprintf("\n### %s  %s\n%s", favicon(feed), feed.Title, items))
+}
+
+// Returns the title and link for the given feed item
+func getFeedTitleAndLink(item *gofeed.Item) (string, string) {
+	return item.Title, item.Link
+}
+
+// Returns the summary for the given feed item
+func getSummary(rss *RSS, item *gofeed.Item, link string) string {
+	if !rss.summarize {
+		return ""
+	}
+
+	summary := getSummaryFromLink(link)
+	if summary == "" {
+		summary = item.Description
+	}
+
+	return summary
+}
+
+// Returns the comments link and count for the given feed item
+func getCommentsInfo(item *gofeed.Item) (string, int) {
+	first_index := strings.Index(item.Description, "Comments URL") + 23
+	comments_url := item.Description[first_index : first_index+45]
+	// Find Comments number
+	first_comments_index := strings.Index(item.Description, "Comments:") + 10
+	// replace </p> with empty string
+	comments_number := strings.Replace(item.Description[first_comments_index:], "</p>\n", "", -1)
+	comments_number_int, _ := strconv.Atoi(comments_number)
+	// return the link and the number of comments
+	return comments_url, comments_number_int
+}
+
+func addToSeenTable(link string, summary string) {
+	stmt, err := db.Prepare("INSERT INTO seen(url, date, summary) values(?,?,?)")
+	check(err)
+	res, err := stmt.Exec(link, currentDate, summary)
+	check(err)
+	_ = res
+	stmt.Close()
+}
+
+func getInstapaperLink(link string) string {
+	return "[<img height=\"16\" src=\"https://staticinstapaper.s3.dualstack.us-west-2.amazonaws.com/img/favicon.png\">](https://www.instapaper.com/hello2?url=" + link + ")"
+}
+
+func isSeenArticle(item *gofeed.Item) (seen bool, today bool, summaryText string) {
+	var url string
+	var date string
+	var summary sql.NullString
+	err := db.QueryRow("SELECT url, date, summary FROM seen WHERE url=?", item.Link).Scan(&url, &date, &summary)
+	if err != nil && err != sql.ErrNoRows {
+		fmt.Println(err)
+		return false, false, ""
+	}
+
+	if summary.Valid {
+		summaryText = summary.String
+	} else {
+		summaryText = ""
+	}
+
+	seen = url != "" && date != currentDate
+	today = url != "" && date == currentDate
+	return seen, today, summaryText
 }
