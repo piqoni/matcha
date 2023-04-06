@@ -203,14 +203,15 @@ func generateConfigFile(currentDir string) {
 	configPath := currentDir + "/" + "config.yaml"
 	if _, err := os.Stat(configPath); err == nil {
 		// File exists, dont do anything
-	} else {
-		f, err := os.OpenFile(configPath, os.O_CREATE|os.O_WRONLY|os.O_EXCL, 0644)
-		if err != nil {
-			fmt.Println(err)
-		}
-		if _, err := f.Write([]byte(config)); err != nil {
-			log.Fatal(err)
-		}
+		return
+	}
+	f, err := os.OpenFile(configPath, os.O_CREATE|os.O_WRONLY|os.O_EXCL, 0644)
+	if err != nil {
+		log.Fatal(err)
+		return
 	}
 
+	if _, err := f.Write([]byte(config)); err != nil {
+		log.Fatal(err)
+	}
 }
