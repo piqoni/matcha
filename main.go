@@ -9,18 +9,17 @@ func main() {
 	bootstrapConfig()
 	displayWeather()
 
-
 	fp := gofeed.NewParser()
-	for _, rss := range myMap {
-		feed := parseFeed(fp, rss.url, rss.limit)
+	for _, feed := range myFeeds {
+		parsedFeed := parseFeed(fp, feed.url, feed.limit)
 
-		if feed == nil {
+		if parsedFeed == nil {
 			continue
 		}
 
-		items := generateFeedItems(feed, &rss)
+		items := generateFeedItems(parsedFeed, &feed)
 		if items != "" {
-			writeFeedToMarkdown(feed, items)
+			writeFeedToMarkdown(parsedFeed, items)
 		}
 	}
 

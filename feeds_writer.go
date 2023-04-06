@@ -24,7 +24,7 @@ var lat, lon float64
 var instapaper bool
 var openaiApiKey string
 var reading_time bool
-var myMap []RSS
+var myFeeds []RSS
 var db *sql.DB
 
 type RSS struct {

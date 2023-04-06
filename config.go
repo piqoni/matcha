@@ -107,7 +107,7 @@ func bootstrapConfig() {
 	} else {
 		markdown_dir_path = currentDir
 	}
-	myMap = []RSS{}
+	myFeeds = []RSS{}
 	feeds := viper.Get("feeds")
 	if viper.IsSet("weather_latitude") {
 		lat = viper.Get("weather_latitude").(float64)
@@ -130,20 +130,20 @@ func bootstrapConfig() {
 
 		for _, summaryFeed := range summaryFeeds.([]any) {
 			url, limit := getFeedAndLimit(summaryFeed.(string))
-			myMap = append(myMap, RSS{url: url, limit: limit, summarize: true})
+			myFeeds = append(myFeeds, RSS{url: url, limit: limit, summarize: true})
 		}
 	}
 
 	for _, feed := range feeds.([]any) {
 		url, limit := getFeedAndLimit(feed.(string))
-		myMap = append(myMap, RSS{url: url, limit: limit})
+		myFeeds = append(myFeeds, RSS{url: url, limit: limit})
 	}
 
 	if viper.IsSet("google_news_keywords") {
 		googleNewsKeywords := url.QueryEscape(viper.Get("google_news_keywords").(string))
 		if googleNewsKeywords != "" {
 			googleNewsUrl := "https://news.google.com/rss/search?hl=en-US&gl=US&ceid=US%3Aen&oc=11&q=" + strings.Join(strings.Split(googleNewsKeywords, "%2C"), "%20%7C%20")
-			myMap = append(myMap, RSS{url: googleNewsUrl, limit: 15}) // #FIXME make it configurable
+			myFeeds = append(myFeeds, RSS{url: googleNewsUrl, limit: 15}) // #FIXME make it configurable
 		}
 	}
 
@@ -151,18 +151,18 @@ func bootstrapConfig() {
 	configPath := currentDir + "/" + "config.opml"
 	if _, err := os.Stat(configPath); err == nil {
 		xmlContent, _ := ioutil.ReadFile(currentDir + "/" + "config.opml")
-		myMap = append(myMap, parseOPML(xmlContent)...)
+		myFeeds = append(myFeeds, parseOPML(xmlContent)...)
 	}
 	// Append any opml file added by -o parameter
 	if len(*opmlFile) > 0 {
 		xmlContent, _ := ioutil.ReadFile(*opmlFile)
-		myMap = append(myMap, parseOPML(xmlContent)...)
+		myFeeds = append(myFeeds, parseOPML(xmlContent)...)
 	}
 
 	// Append opml file from config.yml
 	if viper.IsSet("opml_file_path") {
 		xmlContent, _ := ioutil.ReadFile(viper.Get("opml_file_path").(string))
-		myMap = append(myMap, parseOPML(xmlContent)...)
+		myFeeds = append(myFeeds, parseOPML(xmlContent)...)
 	}
 
 	instapaper = viper.GetBool("instapaper")
