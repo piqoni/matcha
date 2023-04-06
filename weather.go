@@ -18,6 +18,13 @@ func (c *UserAgentTransport) RoundTrip(r *http.Request) (*http.Response, error) 
 	return c.RoundTripper.RoundTrip(r)
 }
 
+func displayWeather() {
+	// Display weather if lat and lon are set
+	if lat != 0 && lon != 0 {
+		writeToMarkdown(getWeather(lat, lon))
+	}
+}
+
 func getWeather(lat, lon float64) string {
 	client := &http.Client{
 		Transport: &UserAgentTransport{http.DefaultTransport},
