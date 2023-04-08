@@ -25,7 +25,7 @@ Matcha is a daily digest generator for your RSS feeds and interested topics/keyw
 
 ## Features
  - RSS daily **digest**, it will show only articles not previously seen
- - Summarized articles from OpenAI for selected feeds
+ - Optional summary of articles from OpenAI for selected feeds
  - Weather for the next 12 Hours (from [YR](https://www.yr.no/))
  - Quick bookmarking of articles to Instapaper
  - Interested Topics/Keywords to follow (through [Google News](https://news.google.com/))
