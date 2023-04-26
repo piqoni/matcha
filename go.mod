@@ -1,4 +1,4 @@
-module matcha
+module github.com/piqoni/matcha
 
 go 1.18
 
@@ -34,7 +34,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.1 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
 	github.com/sashabaranov/go-gpt3 v1.0.1
-	github.com/savioxavier/termlink v1.2.1 // indirect
+	github.com/savioxavier/termlink v1.2.1
 	github.com/spf13/afero v1.8.2 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
