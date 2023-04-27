@@ -7,7 +7,7 @@ import (
 	"time"
 
 	readability "github.com/go-shiori/go-readability"
-	gogpt "github.com/sashabaranov/go-gpt3"
+	openai "github.com/sashabaranov/go-openai"
 )
 
 func getSummaryFromLink(url string) string {
@@ -31,11 +31,11 @@ func summarize(text string) string {
 	if len(text) < 200 {
 		return ""
 	}
-	c := gogpt.NewClient(openaiApiKey)
+	c := openai.NewClient(openaiApiKey)
 	ctx := context.Background()
 
-	req := gogpt.CompletionRequest{
-		Model:     gogpt.GPT3TextDavinci003,
+	req := openai.CompletionRequest{
+		Model:     openai.GPT3Dot5Turbo,
 		MaxTokens: 60,
 		Prompt:    text + " \n\nTl;dr",
 	}
