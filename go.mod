@@ -11,6 +11,7 @@ require (
 require (
 	github.com/go-shiori/dom v0.0.0-20210627111528-4e4722cd0d65 // indirect
 	github.com/gogs/chardet v0.0.0-20191104214054-4b6791f73a28 // indirect
+	github.com/sashabaranov/go-openai v1.9.0 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 )
 

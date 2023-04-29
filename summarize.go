@@ -3,11 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
-	"strings"
 	"time"
 
 	readability "github.com/go-shiori/go-readability"
-	gogpt "github.com/sashabaranov/go-gpt3"
+	openai "github.com/sashabaranov/go-openai"
 )
 
 func getSummaryFromLink(url string) string {
@@ -31,23 +30,29 @@ func summarize(text string) string {
 	if len(text) < 200 {
 		return ""
 	}
-	c := gogpt.NewClient(openaiApiKey)
-	ctx := context.Background()
 
-	req := gogpt.CompletionRequest{
-		Model:     gogpt.GPT3TextDavinci003,
-		MaxTokens: 60,
-		Prompt:    text + " \n\nTl;dr",
-	}
-	resp, err := c.CreateCompletion(ctx, req)
+	client := openai.NewClient(openaiApiKey)
+	resp, err := client.CreateChatCompletion(
+		context.Background(),
+		openai.ChatCompletionRequest{
+			Model: openai.GPT3Dot5Turbo,
+			Messages: []openai.ChatCompletionMessage{
+				{
+					Role:    openai.ChatMessageRoleAssistant,
+					Content: "Summarize the following text:",
+				},
+				{
+					Role:    openai.ChatMessageRoleUser,
+					Content: text,
+				},
+			},
+		},
+	)
+
 	if err != nil {
+		fmt.Printf("ChatCompletion error: %v\n", err)
 		return ""
 	}
 
-	// append ... if text does not end with .
-	if !strings.HasSuffix(resp.Choices[0].Text, ".") {
-		resp.Choices[0].Text = resp.Choices[0].Text + "..."
-	}
-
-	return resp.Choices[0].Text
+	return resp.Choices[0].Message.Content
 }
