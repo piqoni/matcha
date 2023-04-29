@@ -15,7 +15,8 @@
     </a>
 </div>
 
-Matcha is a daily digest generator for your RSS feeds and interested topics/keywords. By using any markdown file viewer (such as [Obsidian](https://obsidian.md/)) or directly from terminal (-t option), you can read your RSS articles whenever you want at your pace, thus avoiding FOMO throughout the day. 
+Matcha is a daily digest generator for your RSS feeds and interested topics/keywords. By using any markdown file viewer (such as [Obsidian](https://obsidian.md/)) or directly from terminal (-t option), you can read your RSS articles whenever you want at your pace, thus avoiding FOMO throughout the day.
+
 ### In Obsidian
 <img width="900" alt="image" src="https://user-images.githubusercontent.com/3144671/219786799-55db70c1-5860-4d4b-9df4-b81a89f8161d.png">
 
@@ -61,7 +62,7 @@ reading_time: false
 openai_api_key: 
 summary_feeds: 
 ```
-### GPT-3 Summary of Articles
+### Summary of Articles using ChatGPT
 To use the summary feature, you need to an OpanAI account ([sign up here](https://openai.com/api/)) then get your API key [here](https://openai.com/api/).
 
 Then update the configuration with the feeds you want to be summarized under "summary_feeds" setting, example:
