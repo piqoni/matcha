@@ -164,7 +164,7 @@ func generateFeedItems(feed *gofeed.Feed, rss *RSS) string {
 			summary = getSummary(rss, item, link)
 		}
 		// Add the comments link if it's a Hacker News feed
-		if strings.Contains(feed.Title, "Hacker News") {
+		if strings.Contains(feed.Link, "news.ycombinator.com") {
 			commentsLink, commentsCount := getCommentsInfo(item)
 			if commentsCount < 100 {
 				items += writeLink("💬 ", commentsLink, false, "")
