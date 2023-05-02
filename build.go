@@ -14,6 +14,7 @@ func buildBinaries() {
 	}{
 		{"linux", "amd64"},
 		{"darwin", "amd64"},
+		{"darwin", "arm64"},
 		{"windows", "amd64"},
 	}
 
