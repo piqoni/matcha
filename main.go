@@ -17,7 +17,7 @@ func main() {
 			continue
 		}
 
-		items := generateFeedItems(parsedFeed, &feed)
+		items := generateFeedItems(parsedFeed, feed)
 		if items != "" {
 			writeFeedToMarkdown(parsedFeed, items)
 		}

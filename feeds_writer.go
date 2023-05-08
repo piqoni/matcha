@@ -151,7 +151,7 @@ func parseFeed(fp *gofeed.Parser, url string, limit int) *gofeed.Feed {
 }
 
 // Generates the feed items and returns them as a string
-func generateFeedItems(feed *gofeed.Feed, rss *RSS) string {
+func generateFeedItems(feed *gofeed.Feed, rss RSS) string {
 	var items string
 
 	for _, item := range feed.Items {
@@ -213,7 +213,7 @@ func getFeedTitleAndLink(item *gofeed.Item) (string, string) {
 }
 
 // Returns the summary for the given feed item
-func getSummary(rss *RSS, item *gofeed.Item, link string) string {
+func getSummary(rss RSS, item *gofeed.Item, link string) string {
 	if !rss.summarize {
 		return ""
 	}
