@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"encoding/xml"
-	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -173,17 +172,15 @@ func bootstrapConfig() {
 		terminal_mode = viper.GetBool("terminal_mode")
 	}
 
-	dbPath, err := os.UserConfigDir()
-	check(err)
-
-	if _, err := os.Stat(dbPath + "/brew"); errors.Is(err, os.ErrNotExist) {
-		err := os.Mkdir(dbPath+"/brew", os.ModePerm)
-		if err != nil {
-			check(err)
-		}
+	databaseFilePath := viper.GetString("database_file_path")
+	if databaseFilePath == "" {
+		databaseDirPath, err := os.UserConfigDir()
+		check(err)
+		databaseFilePath = filepath.Join(databaseDirPath, "brew", "matcha.db")
+		check(os.MkdirAll(filepath.Dir(databaseFilePath), os.ModePerm))
 	}
 
-	db, err = sql.Open("sqlite", dbPath+"/brew/matcha.db")
+	db, err = sql.Open("sqlite", databaseFilePath)
 	check(err)
 	err = applyMigrations(db)
 	if err != nil {

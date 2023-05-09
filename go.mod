@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/mmcdole/gofeed v1.1.3
+	github.com/sashabaranov/go-openai v1.9.0
 	github.com/spf13/viper v1.12.0
 	modernc.org/sqlite v1.20.0
 )
@@ -11,7 +12,6 @@ require (
 require (
 	github.com/go-shiori/dom v0.0.0-20210627111528-4e4722cd0d65 // indirect
 	github.com/gogs/chardet v0.0.0-20191104214054-4b6791f73a28 // indirect
-	github.com/sashabaranov/go-openai v1.9.0 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 )
 
@@ -34,7 +34,6 @@ require (
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.1 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
-	github.com/sashabaranov/go-gpt3 v1.0.1
 	github.com/savioxavier/termlink v1.2.1
 	github.com/spf13/afero v1.8.2 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
