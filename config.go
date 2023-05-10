@@ -190,9 +190,7 @@ func bootstrapConfig() {
 	if !terminal_mode {
 		markdown_file_name := mdPrefix + currentDate + mdSuffix + ".md"
 		err := os.Remove(filepath.Join(markdown_dir_path, markdown_file_name))
-		if err != nil {
-			// fmt.Println("INFO: Coudn't remove old file: ", err)
-		}
+		check(err)
 	}
 }
 
