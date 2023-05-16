@@ -1,6 +1,9 @@
 package main
 
-import "regexp"
+import (
+	"fmt"
+	"regexp"
+)
 
 const regex = `<.*?>`
 
@@ -8,4 +11,10 @@ const regex = `<.*?>`
 func stripHtmlRegex(s string) string {
 	r := regexp.MustCompile(regex)
 	return r.ReplaceAllString(s, "")
+}
+
+func stringToInt(s string) int {
+	var n int
+	fmt.Sscanf(s, "%d", &n)
+	return n
 }

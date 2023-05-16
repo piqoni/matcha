@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/PuerkitoBio/goquery"
 	readability "github.com/go-shiori/go-readability"
 	"github.com/mmcdole/gofeed"
 	"github.com/savioxavier/termlink"
@@ -24,6 +25,7 @@ var lat, lon float64
 var instapaper bool
 var openaiApiKey string
 var reading_time bool
+var show_images bool
 var myFeeds []RSS
 var db *sql.DB
 
@@ -135,6 +137,50 @@ func writeToMarkdown(body string) {
 	}
 }
 
+func ExtractImageTagFromHTML(htmlText string) string {
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(htmlText))
+	if err != nil {
+		return "" // Error occurred while parsing HTML
+	}
+
+	imgTags := doc.Find("img")
+
+	if imgTags.Length() == 0 {
+		return "" // No img tag found, return empty string
+	}
+
+	firstImgTag := imgTags.First()
+
+	width := firstImgTag.AttrOr("width", "")
+	height := firstImgTag.AttrOr("height", "")
+
+	// If both width and height are present, calculate the aspect ratio and set the maximum width
+	if width != "" && height != "" {
+		widthInt := stringToInt(width)
+		heightInt := stringToInt(height)
+
+		if widthInt > 0 && heightInt > 0 {
+			aspectRatio := float64(widthInt) / float64(heightInt)
+			maxWidth := 400
+
+			if widthInt > maxWidth {
+				widthInt = maxWidth
+				heightInt = int(float64(widthInt) / aspectRatio)
+			}
+
+			firstImgTag.SetAttr("width", fmt.Sprintf("%d", widthInt))
+			firstImgTag.SetAttr("height", fmt.Sprintf("%d", heightInt))
+		}
+	}
+
+	html, err := goquery.OuterHtml(firstImgTag)
+	if err != nil {
+		return "" // Error occurred while extracting the HTML of the img tag
+	}
+
+	return html // Return the modified img tag
+}
+
 // Parses the feed URL and returns the feed object
 func parseFeed(fp *gofeed.Parser, url string, limit int) *gofeed.Feed {
 	feed, err := fp.ParseURL(url)
@@ -191,6 +237,13 @@ func generateFeedItems(feed *gofeed.Feed, rss *RSS) string {
 		items += writeLink(title, link, true, timeInMin)
 		if rss.summarize {
 			items += writeSummary(summary, true)
+		}
+
+		if show_images && !terminal_mode {
+			img := ExtractImageTagFromHTML(item.Content)
+			if img != "" {
+				items += img + "\n"
+			}
 		}
 
 		// Add the item to the seen table if not seen today
