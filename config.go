@@ -35,7 +35,7 @@ markdown_file_suffix:
 reading_time: false 
 openai_api_key: 
 summary_feeds: 
-show_images: true`
+show_images: false`
 
 func parseOPML(xmlContent []byte) []RSS {
 	o := Opml{}
