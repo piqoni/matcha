@@ -33,7 +33,8 @@ markdown_file_prefix:
 markdown_file_suffix:
 reading_time: false 
 openai_api_key: 
-summary_feeds: `
+summary_feeds: 
+show_images: false`
 
 func parseOPML(xmlContent []byte) []RSS {
 	o := Opml{}
@@ -166,6 +167,7 @@ func bootstrapConfig() {
 
 	instapaper = viper.GetBool("instapaper")
 	reading_time = viper.GetBool("reading_time")
+	show_images = viper.GetBool("show_images")
 
 	// Overwrite terminal_mode from config file only if its not set through -t flag
 	if !terminal_mode {
