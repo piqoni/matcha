@@ -156,8 +156,8 @@ func ExtractImageTagFromHTML(htmlText string) string {
 
 	// If both width and height are present, calculate the aspect ratio and set the maximum width
 	if width != "" && height != "" {
-		widthInt := stringToInt(width)
-		heightInt := stringToInt(height)
+		widthInt, _ := strconv.Atoi(width)
+		heightInt, _ := strconv.Atoi(height)
 
 		if widthInt > 0 && heightInt > 0 {
 			aspectRatio := float64(widthInt) / float64(heightInt)
