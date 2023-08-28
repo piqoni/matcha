@@ -24,6 +24,7 @@ var currentDate = time.Now().Format("2006-01-02")
 var lat, lon float64
 var instapaper bool
 var openaiApiKey string
+var openaiBaseURL string
 var reading_time bool
 var show_images bool
 var myFeeds []RSS

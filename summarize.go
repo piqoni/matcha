@@ -30,8 +30,11 @@ func summarize(text string) string {
 	if len(text) < 200 {
 		return ""
 	}
-
-	client := openai.NewClient(openaiApiKey)
+	clientConfig := openai.DefaultConfig(openaiApiKey)
+	if openaiBaseURL != "" {
+		clientConfig.BaseURL = openaiBaseURL
+	}
+	client := openai.NewClientWithConfig(clientConfig)
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
