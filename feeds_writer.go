@@ -25,6 +25,7 @@ var lat, lon float64
 var instapaper bool
 var openaiApiKey string
 var openaiBaseURL string
+var openaiModel string
 var reading_time bool
 var show_images bool
 var myFeeds []RSS

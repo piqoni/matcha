@@ -34,11 +34,15 @@ func summarize(text string) string {
 	if openaiBaseURL != "" {
 		clientConfig.BaseURL = openaiBaseURL
 	}
+	model := openai.GPT3Dot5Turbo
+	if openaiModel != "" {
+		model = openaiModel
+	}
 	client := openai.NewClientWithConfig(clientConfig)
 	resp, err := client.CreateChatCompletion(
 		context.Background(),
 		openai.ChatCompletionRequest{
-			Model: openai.GPT3Dot5Turbo,
+			Model: model,
 			Messages: []openai.ChatCompletionMessage{
 				{
 					Role:    openai.ChatMessageRoleAssistant,

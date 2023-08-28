@@ -62,6 +62,7 @@ markdown_file_suffix:
 reading_time: false
 openai_api_key:
 openai_base_url:
+openai_model:
 summary_feeds:
 ```
 
@@ -81,6 +82,12 @@ summary_feeds:
 
 Replace `sk-xxxxxxxxxxxxxxxxx` with your OpenAI API key and include the RSS feeds under `summary_feeds` for articles you're interested in summarizing.
 
+You can also customize which model you use for summarization by changing the openai_model to one of the values [here](https://github.com/sashabaranov/go-openai/blob/a14bc103f4bc2b3ac40c844079fdf59dfdf62b0b/completion.go#L30) which defaults to 'gpt-3.5-turbo' for now. 'gpt-4' is also a valid model name.
+
+```yaml
+openai_model: gpt-3.5-turbo
+```
+
 #### LocalAI Support
 
 For those interested in using LocalAI for summarization, whether for cost-efficiency or privacy reasons, you'll first need to set it up and run it. For setup instructions, please visit the LocalAI repository on GitHub [here](https://github.com/go-skynet/LocalAI).
@@ -88,10 +95,12 @@ For those interested in using LocalAI for summarization, whether for cost-effici
 After setting up LocalAI, you'll need to direct Matcha to the openai-compatible base URL of LocalAI. This is done by updating the "openai_base_url" in the configuration file. For instance, if your LocalAI server is running locally on port 8080, your configuration would look like this:
 
 ```yaml
-openai_base_url: http://localhost:8080
+openai_base_url: http://localhost:8080/v1
+openai_model: openllama-3b
 ```
 
-In this case, 'http://localhost:8080' represents the base URL where your LocalAI server is running. Replace this with your own server's URL. You can also replace the openai_base_url with another hosted url like the Azure endpoint.
+In this case, 'http://localhost:8080/v1' represents the base URL where your LocalAI server is running. 'openai_model' could be any model compatible with LocalAI. You can also replace the openai_base_url with another hosted url like the Azure openai endpoint.
+Please note in case of errors that you may need to change the openai_model to match the model you downloaded in LocalAI.
 
 ### Command line Options
 Run matcha with --help option to see current cli options:

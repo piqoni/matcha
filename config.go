@@ -34,6 +34,7 @@ markdown_file_suffix:
 reading_time: false
 openai_api_key:
 openai_base_url:
+openai_model:
 summary_feeds:
 show_images: false`
 
@@ -127,6 +128,9 @@ func bootstrapConfig() {
 	}
 	if viper.IsSet("openai_base_url") {
 		openaiBaseURL = viper.Get("openai_base_url").(string)
+	}
+	if viper.IsSet("openai_model") {
+		openaiModel = viper.Get("openai_model").(string)
 	}
 
 	if viper.IsSet("summary_feeds") {
