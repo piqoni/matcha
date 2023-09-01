@@ -16,24 +16,26 @@ import (
 	"github.com/spf13/viper"
 )
 
-var config string = `markdown_dir_path: 
+var config string = `markdown_dir_path:
 feeds:
   - http://hnrss.org/best 10
   - https://waitbutwhy.com/feed
   - http://tonsky.me/blog/atom.xml
   - http://www.joelonsoftware.com/rss.xml
   - https://www.youtube.com/feeds/videos.xml?channel_id=UCHnyfMqiRRG1u-2MsSQLbXA
-google_news_keywords: George Hotz,ChatGPT,Copenhagen 
-instapaper: true 
+google_news_keywords: George Hotz,ChatGPT,Copenhagen
+instapaper: true
 weather_latitude: 37.77
 weather_longitude: 122.41
 terminal_mode: false
-opml_file_path: 
-markdown_file_prefix: 
+opml_file_path:
+markdown_file_prefix:
 markdown_file_suffix:
-reading_time: false 
-openai_api_key: 
-summary_feeds: 
+reading_time: false
+openai_api_key:
+openai_base_url:
+openai_model:
+summary_feeds:
 show_images: false`
 
 func parseOPML(xmlContent []byte) []RSS {
@@ -123,6 +125,12 @@ func bootstrapConfig() {
 	}
 	if viper.IsSet("openai_api_key") {
 		openaiApiKey = viper.Get("openai_api_key").(string)
+	}
+	if viper.IsSet("openai_base_url") {
+		openaiBaseURL = viper.Get("openai_base_url").(string)
+	}
+	if viper.IsSet("openai_model") {
+		openaiModel = viper.Get("openai_model").(string)
 	}
 
 	if viper.IsSet("summary_feeds") {
