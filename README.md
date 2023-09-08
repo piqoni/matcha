@@ -114,7 +114,3 @@ Run matcha with --help option to see current cli options:
 
 #### OPML Import
 To use OPML files (exported from other services), rename your file to `config.opml` and leave it in the directory where matcha is located. The other option is to run the command with -o option pointing to the opml filepath.
-
-<div align="center">
-<a href="https://www.buymeacoffee.com/matchaRSS" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
-</div>
