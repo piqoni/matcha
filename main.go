@@ -7,9 +7,11 @@ import (
 
 func main() {
 	bootstrapConfig()
-	displayWeather()
 
 	fp := gofeed.NewParser()
+	writer := getWriter()
+	displayWeather(writer)
+
 	for _, feed := range myFeeds {
 		parsedFeed := parseFeed(fp, feed.url, feed.limit)
 
@@ -17,9 +19,9 @@ func main() {
 			continue
 		}
 
-		items := generateFeedItems(parsedFeed, feed)
+		items := generateFeedItems(writer, parsedFeed, feed)
 		if items != "" {
-			writeFeedToMarkdown(parsedFeed, items)
+			writeFeed(writer, parsedFeed, items)
 		}
 	}
 

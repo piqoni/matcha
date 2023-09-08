@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -18,10 +18,10 @@ func (c *UserAgentTransport) RoundTrip(r *http.Request) (*http.Response, error) 
 	return c.RoundTripper.RoundTrip(r)
 }
 
-func displayWeather() {
+func displayWeather(w Writer) {
 	// Display weather if lat and lon are set
 	if lat != 0 && lon != 0 {
-		writeToMarkdown(getWeather(lat, lon))
+		w.write(getWeather(lat, lon))
 	}
 }
 
@@ -36,7 +36,7 @@ func getWeather(lat, lon float64) string {
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		panic(err)
 	}

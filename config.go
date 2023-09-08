@@ -66,7 +66,7 @@ func getFeedAndLimit(feedURL string) (string, int) {
 		var err error
 		limit, err = strconv.Atoi(chopped[1])
 		if err != nil {
-			check(err)
+			fatal(err)
 		}
 	}
 	return chopped[0], limit
@@ -105,9 +105,9 @@ func bootstrapConfig() {
 	}
 
 	if viper.IsSet("markdown_dir_path") {
-		markdown_dir_path = viper.Get("markdown_dir_path").(string)
+		md_dir_path = viper.Get("markdown_dir_path").(string)
 	} else {
-		markdown_dir_path = currentDir
+		md_dir_path = currentDir
 	}
 	myFeeds = []RSS{}
 	feeds := viper.Get("feeds")
@@ -185,13 +185,13 @@ func bootstrapConfig() {
 	databaseFilePath := viper.GetString("database_file_path")
 	if databaseFilePath == "" {
 		databaseDirPath, err := os.UserConfigDir()
-		check(err)
+		fatal(err)
 		databaseFilePath = filepath.Join(databaseDirPath, "brew", "matcha.db")
-		check(os.MkdirAll(filepath.Dir(databaseFilePath), os.ModePerm))
+		fatal(os.MkdirAll(filepath.Dir(databaseFilePath), os.ModePerm))
 	}
 
 	db, err = sql.Open("sqlite", databaseFilePath)
-	check(err)
+	fatal(err)
 	err = applyMigrations(db)
 	if err != nil {
 		log.Println("Coudn't apply migrations:", err)
@@ -199,7 +199,7 @@ func bootstrapConfig() {
 
 	if !terminal_mode {
 		markdown_file_name := mdPrefix + currentDate + mdSuffix + ".md"
-		os.Remove(filepath.Join(markdown_dir_path, markdown_file_name))
+		os.Remove(filepath.Join(md_dir_path, markdown_file_name))
 	}
 }
 
