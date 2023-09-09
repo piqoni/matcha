@@ -14,7 +14,7 @@ import (
 	"github.com/mmcdole/gofeed"
 )
 
-var md_dir_path string
+var mdDirPath string
 var mdPrefix, mdSuffix string
 var terminal_mode bool = false
 var currentDate = time.Now().Format("2006-01-02")

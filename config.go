@@ -105,9 +105,9 @@ func bootstrapConfig() {
 	}
 
 	if viper.IsSet("markdown_dir_path") {
-		md_dir_path = viper.Get("markdown_dir_path").(string)
+		mdDirPath = viper.Get("markdown_dir_path").(string)
 	} else {
-		md_dir_path = currentDir
+		mdDirPath = currentDir
 	}
 	myFeeds = []RSS{}
 	feeds := viper.Get("feeds")
@@ -199,7 +199,7 @@ func bootstrapConfig() {
 
 	if !terminal_mode {
 		markdown_file_name := mdPrefix + currentDate + mdSuffix + ".md"
-		os.Remove(filepath.Join(md_dir_path, markdown_file_name))
+		os.Remove(filepath.Join(mdDirPath, markdown_file_name))
 	}
 }
 
