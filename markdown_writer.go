@@ -10,7 +10,7 @@ type MarkdownWriter struct{}
 
 func (w MarkdownWriter) write(body string) {
 	markdown_file_name := mdPrefix + currentDate + mdSuffix + ".md"
-	f, err := os.OpenFile(filepath.Join(mdDirPath, markdown_file_name), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := os.OpenFile(filepath.Join(markdownDirPath, markdown_file_name), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}

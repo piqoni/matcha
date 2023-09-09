@@ -14,9 +14,9 @@ import (
 	"github.com/mmcdole/gofeed"
 )
 
-var mdDirPath string
+var markdownDirPath string
 var mdPrefix, mdSuffix string
-var terminal_mode bool = false
+var terminalMode bool = false
 var currentDate = time.Now().Format("2006-01-02")
 var lat, lon float64
 var instapaper bool
@@ -42,7 +42,7 @@ type Writer interface {
 }
 
 func getWriter() Writer {
-	if terminal_mode {
+	if terminalMode {
 		return TerminalWriter{}
 	}
 	return MarkdownWriter{}
@@ -180,7 +180,7 @@ func generateFeedItems(w Writer, feed *gofeed.Feed, rss RSS) string {
 		}
 
 		// Add the Instapaper link if enabled
-		if instapaper && !terminal_mode {
+		if instapaper && !terminalMode {
 			items += getInstapaperLink(item.Link)
 		}
 
@@ -199,7 +199,7 @@ func generateFeedItems(w Writer, feed *gofeed.Feed, rss RSS) string {
 			items += w.writeSummary(summary, true)
 		}
 
-		if show_images && !terminal_mode {
+		if show_images && !terminalMode {
 			img := ExtractImageTagFromHTML(item.Content)
 			if img != "" {
 				items += img + "\n"

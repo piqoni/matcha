@@ -5,7 +5,6 @@ import (
 	"encoding/xml"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/url"
 	"os"
@@ -78,7 +77,7 @@ func bootstrapConfig() {
 		log.Println(direrr)
 	}
 	// if -t parameter is passed overwrite terminal_mode setting in config.yml
-	flag.BoolVar(&terminal_mode, "t", terminal_mode, "Run Matcha in Terminal Mode, no markdown files will be created")
+	flag.BoolVar(&terminalMode, "t", terminalMode, "Run Matcha in Terminal Mode, no markdown files will be created")
 	configFile := flag.String("c", "", "Config file path (if you want to override the current directory config.yaml)")
 	opmlFile := flag.String("o", "", "OPML file path to append feeds from opml files")
 	build := flag.Bool("build", false, "Dev: Build matcha binaries in the bin directory")
@@ -105,9 +104,9 @@ func bootstrapConfig() {
 	}
 
 	if viper.IsSet("markdown_dir_path") {
-		mdDirPath = viper.Get("markdown_dir_path").(string)
+		markdownDirPath = viper.Get("markdown_dir_path").(string)
 	} else {
-		mdDirPath = currentDir
+		markdownDirPath = currentDir
 	}
 	myFeeds = []RSS{}
 	feeds := viper.Get("feeds")
@@ -158,18 +157,18 @@ func bootstrapConfig() {
 	// Import any config.opml file on current direcotory
 	configPath := currentDir + "/" + "config.opml"
 	if _, err := os.Stat(configPath); err == nil {
-		xmlContent, _ := ioutil.ReadFile(currentDir + "/" + "config.opml")
+		xmlContent, _ := os.ReadFile(currentDir + "/" + "config.opml")
 		myFeeds = append(myFeeds, parseOPML(xmlContent)...)
 	}
 	// Append any opml file added by -o parameter
 	if len(*opmlFile) > 0 {
-		xmlContent, _ := ioutil.ReadFile(*opmlFile)
+		xmlContent, _ := os.ReadFile(*opmlFile)
 		myFeeds = append(myFeeds, parseOPML(xmlContent)...)
 	}
 
 	// Append opml file from config.yml
 	if viper.IsSet("opml_file_path") {
-		xmlContent, _ := ioutil.ReadFile(viper.Get("opml_file_path").(string))
+		xmlContent, _ := os.ReadFile(viper.Get("opml_file_path").(string))
 		myFeeds = append(myFeeds, parseOPML(xmlContent)...)
 	}
 
@@ -178,8 +177,8 @@ func bootstrapConfig() {
 	show_images = viper.GetBool("show_images")
 
 	// Overwrite terminal_mode from config file only if its not set through -t flag
-	if !terminal_mode {
-		terminal_mode = viper.GetBool("terminal_mode")
+	if !terminalMode {
+		terminalMode = viper.GetBool("terminal_mode")
 	}
 
 	databaseFilePath := viper.GetString("database_file_path")
@@ -197,9 +196,9 @@ func bootstrapConfig() {
 		log.Println("Coudn't apply migrations:", err)
 	}
 
-	if !terminal_mode {
+	if !terminalMode {
 		markdown_file_name := mdPrefix + currentDate + mdSuffix + ".md"
-		os.Remove(filepath.Join(mdDirPath, markdown_file_name))
+		os.Remove(filepath.Join(markdownDirPath, markdown_file_name))
 	}
 }
 
