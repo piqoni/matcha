@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/url"
-	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -14,12 +12,11 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	readability "github.com/go-shiori/go-readability"
 	"github.com/mmcdole/gofeed"
-	"github.com/savioxavier/termlink"
 )
 
-var markdown_dir_path string
+var markdownDirPath string
 var mdPrefix, mdSuffix string
-var terminal_mode bool = false
+var terminalMode bool = false
 var currentDate = time.Now().Format("2006-01-02")
 var lat, lon float64
 var instapaper bool
@@ -37,26 +34,24 @@ type RSS struct {
 	summarize bool
 }
 
-func check(e error) {
+type Writer interface {
+	write(body string)
+	writeLink(title string, url string, newline bool, readingTime string) string
+	writeSummary(content string, newline bool) string
+	writeFavicon(s *gofeed.Feed) string
+}
+
+func getWriter() Writer {
+	if terminalMode {
+		return TerminalWriter{}
+	}
+	return MarkdownWriter{}
+}
+
+func fatal(e error) {
 	if e != nil {
 		log.Fatal(e)
 	}
-}
-
-func writeLink(title string, url string, newline bool, readingTime string) string {
-	var content string
-	if terminal_mode {
-		content = termlink.Link(title, url)
-	} else {
-		content = "[" + title + "](" + url + ")"
-	}
-	if readingTime != "" {
-		content += " (" + readingTime + ")"
-	}
-	if newline {
-		content += "\n"
-	}
-	return content
 }
 
 func getReadingTime(link string) string {
@@ -80,26 +75,7 @@ func getReadingTime(link string) string {
 	return strconv.Itoa(minutes) + " min"
 }
 
-func writeSummary(content string, newline bool) string {
-	if content == "" {
-		return content
-	}
-	if terminal_mode {
-		if newline {
-			content += "\n"
-		}
-	} else {
-		if newline {
-			content += "  \n\n"
-		}
-	}
-	return content
-}
-
-func favicon(s *gofeed.Feed) string {
-	if terminal_mode {
-		return ""
-	}
+func (w MarkdownWriter) writeFavicon(s *gofeed.Feed) string {
 	var src string
 	if s.FeedLink == "" {
 		// default feed favicon
@@ -119,24 +95,6 @@ func favicon(s *gofeed.Feed) string {
 
 	//return html image tag of favicon
 	return fmt.Sprintf("<img src=\"%s\" width=\"32\" height=\"32\" />", src)
-}
-
-func writeToMarkdown(body string) {
-	if terminal_mode {
-		fmt.Println(body)
-	} else {
-		markdown_file_name := mdPrefix + currentDate + mdSuffix + ".md"
-		f, err := os.OpenFile(filepath.Join(markdown_dir_path, markdown_file_name), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-		if err != nil {
-			log.Fatal(err)
-		}
-		if _, err := f.Write([]byte(body)); err != nil {
-			log.Fatal(err)
-		}
-		if err := f.Close(); err != nil {
-			log.Fatal(err)
-		}
-	}
 }
 
 func ExtractImageTagFromHTML(htmlText string) string {
@@ -199,7 +157,7 @@ func parseFeed(fp *gofeed.Parser, url string, limit int) *gofeed.Feed {
 }
 
 // Generates the feed items and returns them as a string
-func generateFeedItems(feed *gofeed.Feed, rss RSS) string {
+func generateFeedItems(w Writer, feed *gofeed.Feed, rss RSS) string {
 	var items string
 
 	for _, item := range feed.Items {
@@ -215,14 +173,14 @@ func generateFeedItems(feed *gofeed.Feed, rss RSS) string {
 		if strings.Contains(feed.Link, "news.ycombinator.com") {
 			commentsLink, commentsCount := getCommentsInfo(item)
 			if commentsCount < 100 {
-				items += writeLink("💬 ", commentsLink, false, "")
+				items += w.writeLink("💬 ", commentsLink, false, "")
 			} else {
-				items += writeLink("🔥 ", commentsLink, false, "")
+				items += w.writeLink("🔥 ", commentsLink, false, "")
 			}
 		}
 
 		// Add the Instapaper link if enabled
-		if instapaper && !terminal_mode {
+		if instapaper && !terminalMode {
 			items += getInstapaperLink(item.Link)
 		}
 
@@ -236,12 +194,12 @@ func generateFeedItems(feed *gofeed.Feed, rss RSS) string {
 			timeInMin = getReadingTime(link)
 		}
 
-		items += writeLink(title, link, true, timeInMin)
+		items += w.writeLink(title, link, true, timeInMin)
 		if rss.summarize {
-			items += writeSummary(summary, true)
+			items += w.writeSummary(summary, true)
 		}
 
-		if show_images && !terminal_mode {
+		if show_images && !terminalMode {
 			img := ExtractImageTagFromHTML(item.Content)
 			if img != "" {
 				items += img + "\n"
@@ -257,9 +215,9 @@ func generateFeedItems(feed *gofeed.Feed, rss RSS) string {
 	return items
 }
 
-// Writes the feed and its items to the markdown file
-func writeFeedToMarkdown(feed *gofeed.Feed, items string) {
-	writeToMarkdown(fmt.Sprintf("\n### %s  %s\n%s", favicon(feed), feed.Title, items))
+// Writes the feed and its items
+func writeFeed(w Writer, feed *gofeed.Feed, items string) {
+	w.write(fmt.Sprintf("\n### %s  %s\n%s", w.writeFavicon(feed), feed.Title, items))
 }
 
 // Returns the title and link for the given feed item
@@ -296,9 +254,9 @@ func getCommentsInfo(item *gofeed.Item) (string, int) {
 
 func addToSeenTable(link string, summary string) {
 	stmt, err := db.Prepare("INSERT INTO seen(url, date, summary) values(?,?,?)")
-	check(err)
+	fatal(err)
 	res, err := stmt.Exec(link, currentDate, summary)
-	check(err)
+	fatal(err)
 	_ = res
 	stmt.Close()
 }
