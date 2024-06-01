@@ -25,6 +25,7 @@ var openaiBaseURL string
 var openaiModel string
 var reading_time bool
 var show_images bool
+var sunrise_sunset bool
 var myFeeds []RSS
 var db *sql.DB
 
