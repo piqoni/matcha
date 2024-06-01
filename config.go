@@ -31,6 +31,7 @@ opml_file_path:
 markdown_file_prefix:
 markdown_file_suffix:
 reading_time: false
+sunrise_sunset: false
 openai_api_key:
 openai_base_url:
 openai_model:
@@ -175,6 +176,7 @@ func bootstrapConfig() {
 	instapaper = viper.GetBool("instapaper")
 	reading_time = viper.GetBool("reading_time")
 	show_images = viper.GetBool("show_images")
+	sunrise_sunset = viper.GetBool("sunrise_sunset")
 
 	// Overwrite terminal_mode from config file only if its not set through -t flag
 	if !terminalMode {

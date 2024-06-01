@@ -11,6 +11,7 @@ func main() {
 	fp := gofeed.NewParser()
 	writer := getWriter()
 	displayWeather(writer)
+	displaySunriseSunset(writer)
 
 	for _, feed := range myFeeds {
 		parsedFeed := parseFeed(fp, feed.url, feed.limit)

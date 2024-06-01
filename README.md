@@ -60,6 +60,7 @@ opml_file_path:
 markdown_file_prefix:
 markdown_file_suffix:
 reading_time: false
+sunrise_sunset: false
 openai_api_key:
 openai_base_url:
 openai_model:

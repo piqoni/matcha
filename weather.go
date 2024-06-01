@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/nathan-osman/go-sunrise"
 )
 
 type UserAgentTransport struct {
@@ -22,6 +24,16 @@ func displayWeather(w Writer) {
 	// Display weather if lat and lon are set
 	if lat != 0 && lon != 0 {
 		w.write(getWeather(lat, lon))
+	}
+}
+
+func displaySunriseSunset(w Writer) {
+	if sunrise_sunset && lat != 0 && lon != 0 {
+		rise, set := sunrise.SunriseSunset(
+			lat, lon,
+			time.Now().Year(), time.Now().Month(), time.Now().Day(),
+		)
+		w.write(fmt.Sprintf("🌅 %s 🌇 %s", rise.Local().Format("15:04"), set.Local().Format("15:04")))
 	}
 }
 
@@ -46,7 +58,7 @@ func getWeather(lat, lon float64) string {
 	var temperature float64 = res.Properties.Timeseries[0].Data.Instant.Details.AirTemperature
 	var next_12_hours string = res.Properties.Timeseries[0].Data.Next12Hours.Summary.SymbolCode
 	var weatherEmoji string = determineWeatherEmoji(next_12_hours)
-	return fmt.Sprintf("# %d°C %s ️\n", int(temperature+0.5), weatherEmoji)
+	return fmt.Sprintf("# %d°C %s ️", int(temperature+0.5), weatherEmoji)
 
 }
 
