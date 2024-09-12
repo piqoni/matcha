@@ -156,7 +156,7 @@ func bootstrapConfig() {
 			if viper.IsSet("google_news_length") {
 				googleNewsLength = viper.Get("google_news_length").(int)
 			} else {
-				googleNewsLength = 15 // limit
+				googleNewsLength = 15 // default limit
 			}
 			myFeeds = append(myFeeds, RSS{url: googleNewsUrl, limit: googleNewsLength})
 		}
