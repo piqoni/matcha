@@ -76,6 +76,8 @@ func determineWeatherEmoji(desc string) string {
 		return "⛈"
 	case strings.Contains(desc, "clearsky_night"):
 		return "🌙"
+	case strings.Contains(desc, "sleet"):
+		return "🌧️❄️"
 	case strings.Contains(desc, "fair_night") || strings.Contains(desc, "fair_day"):
 		return "🌤"
 	default:
