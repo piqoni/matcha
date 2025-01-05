@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/mmcdole/gofeed v1.1.3
 	github.com/nathan-osman/go-sunrise v1.1.0
-	github.com/sashabaranov/go-openai v1.14.2
+	github.com/sashabaranov/go-openai v1.36.1
 	github.com/spf13/viper v1.16.0
 	modernc.org/sqlite v1.20.0
 )

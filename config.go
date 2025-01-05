@@ -36,7 +36,12 @@ openai_api_key:
 openai_base_url:
 openai_model:
 summary_feeds:
-show_images: false`
+show_images: false
+analyst_feeds:
+  - https://feeds.bbci.co.uk/news/business/rss.xml
+analyst_prompt:
+analyst_model:
+`
 
 func parseOPML(xmlContent []byte) []RSS {
 	o := Opml{}
