@@ -80,8 +80,11 @@ analyst_prompt: You are a world-class investing expert. Analyze the provided lis
 ```
 
 How it Works:
-Gathering Articles: The RSS feeds specified in analyst_feeds are fetched, and the titles along with their rss descriptions are attached to the analyst_prompt to form a single input prompt. 
+The RSS feeds specified in analyst_feeds are fetched, and the titles along with their rss descriptions are attached to the analyst_prompt to form a single input prompt. 
 Then the prompt is sent to the specified language model (analyst_model), and the response is included in the daily markdown file under the Analysis section.
+
+Snippet of sample output (as an investment analyst):
+<img width="961" alt="image" src="https://github.com/user-attachments/assets/5ccb43d0-3057-4b39-b445-891246c9b644" />
 
 Default model is OpenAI's gpt-4o but to override model add configuration:
 ```
