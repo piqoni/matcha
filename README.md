@@ -67,6 +67,27 @@ openai_model:
 summary_feeds:
 ```
 
+### Analyst LLM Feature
+The Analyst feature enables you to gather articles from specified feeds and analyze them using a prompt sent to a language model like GPT-4o (default). The result is included in the daily digest under an Analysis section. You write on your analyst_prompt setting what do you want the analyst to do on your behalf, for example picking relevant news to your liking (example: a cybersecurity expert interested only in certain type of attack), or having an investing analyst suggesting investment opportunities, etc. 
+
+Configuration Example of an analyst finding investment opportunities:
+
+```yaml
+openai_api_key: sk-xxxxxxxxxxxxxxxxx
+analyst_feeds:
+  - https://feeds.bbci.co.uk/news/business/rss.xml
+analyst_prompt: You are a world-class investing expert. Analyze the provided list of articles for potential investment opportunities. If no direct opportunities are found, identify industries, regions, or trends that could have indirect impacts on the investment landscape.
+```
+
+How it Works:
+Gathering Articles: The RSS feeds specified in analyst_feeds are fetched, and the titles along with their rss descriptions are attached to the analyst_prompt to form a single input prompt. 
+Then the prompt is sent to the specified language model (analyst_model), and the response is included in the daily markdown file under the Analysis section.
+
+Default model is OpenAI's gpt-4o but to override model add configuration:
+```
+analyst_model: o1-preview
+```
+
 ### Summarization of Articles using ChatGPT
 
 In order to use the summarization feature, you'll first need to set up an OpenAI account. If you haven't already done so, you can sign up [here](https://platform.openai.com/login?launch). Once registered, you'll need to acquire an OpenAI API key which can be found [here](https://platform.openai.com/account/api-keys).

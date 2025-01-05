@@ -12,6 +12,7 @@ func main() {
 	writer := getWriter()
 	displayWeather(writer)
 	displaySunriseSunset(writer)
+	generateAnalysis(fp, writer)
 
 	for _, feed := range myFeeds {
 		parsedFeed := parseFeed(fp, feed.url, feed.limit)
@@ -26,6 +27,5 @@ func main() {
 		}
 	}
 
-	// Close the database connection after processing all the feeds
 	defer db.Close()
 }
