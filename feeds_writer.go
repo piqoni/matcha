@@ -162,7 +162,7 @@ func generateFeedItems(w Writer, feed *gofeed.Feed, rss RSS) string {
 	var items string
 
 	for _, item := range feed.Items {
-		seen, seen_today, summary := isSeenArticle(item)
+		seen, seen_today, summary := isSeenArticle(item, "")
 		if seen {
 			continue
 		}
@@ -266,11 +266,11 @@ func getInstapaperLink(link string) string {
 	return "[<img height=\"16\" src=\"https://staticinstapaper.s3.dualstack.us-west-2.amazonaws.com/img/favicon.png\">](https://www.instapaper.com/hello2?url=" + link + ")"
 }
 
-func isSeenArticle(item *gofeed.Item) (seen bool, today bool, summaryText string) {
+func isSeenArticle(item *gofeed.Item, postfix string) (seen bool, today bool, summaryText string) {
 	var url string
 	var date string
 	var summary sql.NullString
-	err := db.QueryRow("SELECT url, date, summary FROM seen WHERE url=?", item.Link).Scan(&url, &date, &summary)
+	err := db.QueryRow("SELECT url, date, summary FROM seen WHERE url=?", item.Link+postfix).Scan(&url, &date, &summary)
 	if err != nil && err != sql.ErrNoRows {
 		fmt.Println(err)
 		return false, false, ""
