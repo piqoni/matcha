@@ -29,7 +29,14 @@ func generateAnalysis(fp *gofeed.Parser, writer Writer) {
 			continue
 		}
 		for _, item := range parsedFeed.Items {
+			seen, seen_today, summary := isSeenArticle(item)
+			if seen {
+				continue
+			}
 			articleTitles = append(articleTitles, item.Title+":  "+item.Description) // add also description for better context
+			if !seen_today {
+				addToSeenTable(item.Link+"#analyst", summary)
+			}
 		}
 	}
 
