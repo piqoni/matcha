@@ -147,11 +147,12 @@ func bootstrapConfig() {
 			myFeeds = append(myFeeds, RSS{url: url, limit: limit, summarize: true})
 		}
 	}
-
-	for _, feed := range feeds.([]any) {
-		url, limit := getFeedAndLimit(feed.(string))
-		myFeeds = append(myFeeds, RSS{url: url, limit: limit})
-	}
+	if feeds != nil {
+			for _, feed := range feeds.([]any) {
+				url, limit := getFeedAndLimit(feed.(string))
+				myFeeds = append(myFeeds, RSS{url: url, limit: limit})
+			}
+		}
 
 	if viper.IsSet("google_news_keywords") {
 		googleNewsKeywords := url.QueryEscape(viper.Get("google_news_keywords").(string))
