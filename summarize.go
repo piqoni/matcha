@@ -7,6 +7,7 @@ import (
 
 	readability "github.com/go-shiori/go-readability"
 	openai "github.com/sashabaranov/go-openai"
+	"github.com/spf13/viper"
 )
 
 func getSummaryFromLink(url string) string {
@@ -30,6 +31,12 @@ func summarize(text string) string {
 	if len(text) < 200 {
 		return ""
 	}
+	
+	summaryPrompt := viper.GetString("summary_prompt")
+	if summaryPrompt == "" {
+		summaryPrompt = "Summarize the following text:"
+	}
+	
 	clientConfig := openai.DefaultConfig(openaiApiKey)
 	if openaiBaseURL != "" {
 		clientConfig.BaseURL = openaiBaseURL
@@ -46,7 +53,7 @@ func summarize(text string) string {
 			Messages: []openai.ChatCompletionMessage{
 				{
 					Role:    openai.ChatMessageRoleAssistant,
-					Content: "Summarize the following text:",
+					Content: summaryPrompt,
 				},
 				{
 					Role:    openai.ChatMessageRoleUser,

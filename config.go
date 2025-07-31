@@ -36,6 +36,7 @@ openai_api_key:
 openai_base_url:
 openai_model:
 summary_feeds:
+summary_prompt:
 show_images: false
 analyst_feeds:
   - https://feeds.bbci.co.uk/news/business/rss.xml
