@@ -138,7 +138,9 @@ func bootstrapConfig() {
 	if viper.IsSet("openai_model") {
 		openaiModel = viper.Get("openai_model").(string)
 	}
-
+	if viper.IsSet("summary_prompt") {
+		summaryPrompt = viper.Get("summary_prompt").(string)
+	}
 	if viper.IsSet("summary_feeds") {
 		summaryFeeds := viper.Get("summary_feeds")
 

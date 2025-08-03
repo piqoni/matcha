@@ -28,6 +28,7 @@ var show_images bool
 var sunrise_sunset bool
 var myFeeds []RSS
 var db *sql.DB
+var summaryPrompt string
 
 type RSS struct {
 	url       string

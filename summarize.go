@@ -32,9 +32,9 @@ func summarize(text string) string {
 		return ""
 	}
 	
-	summaryPrompt := viper.GetString("summary_prompt")
-	if summaryPrompt == "" {
-		summaryPrompt = "Summarize the following text:"
+	prompt := summaryPrompt
+	if prompt == "" {
+		prompt = "Summarize the following text:"
 	}
 	
 	clientConfig := openai.DefaultConfig(openaiApiKey)
@@ -53,7 +53,7 @@ func summarize(text string) string {
 			Messages: []openai.ChatCompletionMessage{
 				{
 					Role:    openai.ChatMessageRoleAssistant,
-					Content: summaryPrompt,
+					Content: prompt,
 				},
 				{
 					Role:    openai.ChatMessageRoleUser,
