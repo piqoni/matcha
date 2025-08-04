@@ -36,6 +36,7 @@ openai_api_key:
 openai_base_url:
 openai_model:
 summary_feeds:
+summary_prompt:
 show_images: false
 analyst_feeds:
   - https://feeds.bbci.co.uk/news/business/rss.xml
@@ -137,7 +138,9 @@ func bootstrapConfig() {
 	if viper.IsSet("openai_model") {
 		openaiModel = viper.Get("openai_model").(string)
 	}
-
+	if viper.IsSet("summary_prompt") {
+		summaryPrompt = viper.Get("summary_prompt").(string)
+	}
 	if viper.IsSet("summary_feeds") {
 		summaryFeeds := viper.Get("summary_feeds")
 
@@ -146,11 +149,12 @@ func bootstrapConfig() {
 			myFeeds = append(myFeeds, RSS{url: url, limit: limit, summarize: true})
 		}
 	}
-
-	for _, feed := range feeds.([]any) {
-		url, limit := getFeedAndLimit(feed.(string))
-		myFeeds = append(myFeeds, RSS{url: url, limit: limit})
-	}
+	if feeds != nil {
+			for _, feed := range feeds.([]any) {
+				url, limit := getFeedAndLimit(feed.(string))
+				myFeeds = append(myFeeds, RSS{url: url, limit: limit})
+			}
+		}
 
 	if viper.IsSet("google_news_keywords") {
 		googleNewsKeywords := url.QueryEscape(viper.Get("google_news_keywords").(string))
