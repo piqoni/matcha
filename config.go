@@ -23,6 +23,7 @@ feeds:
   - http://www.joelonsoftware.com/rss.xml
   - https://www.youtube.com/feeds/videos.xml?channel_id=UCHnyfMqiRRG1u-2MsSQLbXA
 google_news_keywords: George Hotz,ChatGPT,Copenhagen
+google_news_length: 5
 instapaper: true
 weather_latitude: 37.77
 weather_longitude: 122.41
@@ -160,7 +161,13 @@ func bootstrapConfig() {
 		googleNewsKeywords := url.QueryEscape(viper.Get("google_news_keywords").(string))
 		if googleNewsKeywords != "" {
 			googleNewsUrl := "https://news.google.com/rss/search?hl=en-US&gl=US&ceid=US%3Aen&oc=11&q=" + strings.Join(strings.Split(googleNewsKeywords, "%2C"), "%20%7C%20")
-			myFeeds = append(myFeeds, RSS{url: googleNewsUrl, limit: 15}) // #FIXME make it configurable
+			var googleNewsLength int
+			if viper.IsSet("google_news_length") {
+				googleNewsLength = viper.Get("google_news_length").(int)
+			} else {
+				googleNewsLength = 15 // default limit
+			}
+			myFeeds = append(myFeeds, RSS{url: googleNewsUrl, limit: googleNewsLength})
 		}
 	}
 

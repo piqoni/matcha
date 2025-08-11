@@ -52,6 +52,7 @@ feeds:
   - http://www.joelonsoftware.com/rss.xml
   - https://www.youtube.com/feeds/videos.xml?channel_id=UCHnyfMqiRRG1u-2MsSQLbXA
 google_news_keywords: George Hotz,ChatGPT,Copenhagen
+google_news_length: 5
 instapaper: true
 weather_latitude: 37.77
 weather_longitude: 122.41
