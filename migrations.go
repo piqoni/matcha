@@ -34,7 +34,23 @@ func (s *Storage) applyMigrations() error {
 	if err != nil {
 		return err
 	}
+	if err := s.addNotificationsTableIfNotExists(); err != nil {
+		return err
+	}
+
 	return nil
+}
+
+func (s *Storage) addNotificationsTableIfNotExists() error {
+	_, err := s.db.Exec(`
+        CREATE TABLE IF NOT EXISTS notifications (
+            feed TEXT,
+            date TEXT,
+            notified INTEGER DEFAULT 0,
+            PRIMARY KEY (feed, date)
+        )
+    `)
+	return err
 }
 
 func (s *Storage) addSummaryColumnIfNotExists() error {
@@ -109,4 +125,27 @@ func (s *Storage) IsSeen(link string) (bool, bool, string) {
 
 func (s *Storage) Close() {
 	s.db.Close()
+}
+
+// MarkFeedNotified marks the feed as notified for today.
+func (s *Storage) MarkFeedNotified(feed string) error {
+	today := time.Now().Format("2006-01-02")
+	// Upsert: insert or replace into notifications
+	_, err := s.db.Exec(`
+        INSERT INTO notifications(feed, date, notified) VALUES(?, ?, 1)
+        ON CONFLICT(feed, date) DO UPDATE SET notified = 1
+    `, feed, today)
+	return err
+}
+
+// WasFeedNotifiedToday returns true if the given feed is marked notified today.
+func (s *Storage) WasFeedNotifiedToday(feed string) bool {
+	today := time.Now().Format("2006-01-02")
+	var notified int
+	err := s.db.QueryRow("SELECT IFNULL(notified,0) FROM notifications WHERE feed=? AND date=?", feed, today).Scan(&notified)
+	if err != nil {
+		// if no row found, QueryRow.Scan returns an error; treat as not notified
+		return false
+	}
+	return notified == 1
 }

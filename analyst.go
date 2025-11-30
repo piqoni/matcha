@@ -1,6 +1,12 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
+	"io"
+	"net/http"
+	"strings"
+
 	"github.com/mmcdole/gofeed"
 )
 
@@ -23,9 +29,20 @@ func RunAnalyst(cfg *Config, store *Storage, llm *LLMClient, writer Writer, fp *
 	}
 
 	analysis := llm.Analyze(articles)
+
 	if analysis != "" {
 		writer.Write("\n## Daily Analysis:\n")
 		writer.Write(analysis + "\n")
+
+		if cfg.NotificationTrigger != "" &&
+			cfg.NotificationWebhookURL != "" &&
+			strings.TrimSpace(analysis) == strings.TrimSpace(cfg.NotificationTrigger) &&
+			!store.WasFeedNotifiedToday(cfg.AnalystFeeds[0]) {
+
+			if err := sendNotification(cfg.NotificationWebhookURL, analysis); err == nil {
+				_ = store.MarkFeedNotified(cfg.AnalystFeeds[0])
+			}
+		}
 	}
 }
 
@@ -64,4 +81,30 @@ func collectArticlesForAnalysis(cfg *Config, store *Storage, fp *gofeed.Parser) 
 	}
 
 	return articles
+}
+
+func sendNotification(url, message string) error {
+	// Detect Slack webhook
+	if strings.Contains(url, "hooks.slack.com") {
+		// Slack requires JSON payload
+		payload := map[string]string{"text": message}
+		body, _ := json.Marshal(payload)
+
+		resp, err := http.Post(url, "application/json", bytes.NewReader(body))
+		if err != nil {
+			return err
+		}
+		defer resp.Body.Close()
+		io.Copy(io.Discard, resp.Body)
+		return nil
+	}
+
+	// Default: ntfy.sh or generic text webhook
+	resp, err := http.Post(url, "text/plain", strings.NewReader(message))
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	io.Copy(io.Discard, resp.Body)
+	return nil
 }

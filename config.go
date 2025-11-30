@@ -44,26 +44,28 @@ analyst_model:
 `
 
 type Config struct {
-	MarkdownDirPath    string
-	MarkdownFilePrefix string
-	MarkdownFileSuffix string
-	Feeds              []RSS
-	GoogleNewsKeywords string
-	Instapaper         bool
-	WeatherLat         float64
-	WeatherLon         float64
-	TerminalMode       bool
-	ReadingTime        bool
-	SunriseSunset      bool
-	ShowImages         bool
-	OpenAIKey          string
-	OpenAIBaseURL      string
-	OpenAIModel        string
-	SummaryPrompt      string
-	AnalystFeeds       []string
-	AnalystPrompt      string
-	AnalystModel       string
-	DatabaseFilePath   string
+	MarkdownDirPath        string
+	MarkdownFilePrefix     string
+	MarkdownFileSuffix     string
+	Feeds                  []RSS
+	GoogleNewsKeywords     string
+	Instapaper             bool
+	WeatherLat             float64
+	WeatherLon             float64
+	TerminalMode           bool
+	ReadingTime            bool
+	SunriseSunset          bool
+	ShowImages             bool
+	OpenAIKey              string
+	OpenAIBaseURL          string
+	OpenAIModel            string
+	SummaryPrompt          string
+	AnalystFeeds           []string
+	AnalystPrompt          string
+	AnalystModel           string
+	DatabaseFilePath       string
+	NotificationTrigger    string
+	NotificationWebhookURL string
 }
 
 type RSS struct {
@@ -102,25 +104,27 @@ func LoadConfig() (*Config, error) {
 	}
 
 	cfg := &Config{
-		MarkdownDirPath:    viper.GetString("markdown_dir_path"),
-		MarkdownFilePrefix: viper.GetString("markdown_file_prefix"),
-		MarkdownFileSuffix: viper.GetString("markdown_file_suffix"),
-		GoogleNewsKeywords: viper.GetString("google_news_keywords"),
-		Instapaper:         viper.GetBool("instapaper"),
-		WeatherLat:         viper.GetFloat64("weather_latitude"),
-		WeatherLon:         viper.GetFloat64("weather_longitude"),
-		TerminalMode:       viper.GetBool("terminal_mode") || *terminalMode,
-		ReadingTime:        viper.GetBool("reading_time"),
-		SunriseSunset:      viper.GetBool("sunrise_sunset"),
-		ShowImages:         viper.GetBool("show_images"),
-		OpenAIKey:          viper.GetString("openai_api_key"),
-		OpenAIBaseURL:      viper.GetString("openai_base_url"),
-		OpenAIModel:        viper.GetString("openai_model"),
-		SummaryPrompt:      viper.GetString("summary_prompt"),
-		AnalystFeeds:       viper.GetStringSlice("analyst_feeds"),
-		AnalystPrompt:      viper.GetString("analyst_prompt"),
-		AnalystModel:       viper.GetString("analyst_model"),
-		DatabaseFilePath:   viper.GetString("database_file_path"),
+		MarkdownDirPath:        viper.GetString("markdown_dir_path"),
+		MarkdownFilePrefix:     viper.GetString("markdown_file_prefix"),
+		MarkdownFileSuffix:     viper.GetString("markdown_file_suffix"),
+		GoogleNewsKeywords:     viper.GetString("google_news_keywords"),
+		Instapaper:             viper.GetBool("instapaper"),
+		WeatherLat:             viper.GetFloat64("weather_latitude"),
+		WeatherLon:             viper.GetFloat64("weather_longitude"),
+		TerminalMode:           viper.GetBool("terminal_mode") || *terminalMode,
+		ReadingTime:            viper.GetBool("reading_time"),
+		SunriseSunset:          viper.GetBool("sunrise_sunset"),
+		ShowImages:             viper.GetBool("show_images"),
+		OpenAIKey:              viper.GetString("openai_api_key"),
+		OpenAIBaseURL:          viper.GetString("openai_base_url"),
+		OpenAIModel:            viper.GetString("openai_model"),
+		SummaryPrompt:          viper.GetString("summary_prompt"),
+		AnalystFeeds:           viper.GetStringSlice("analyst_feeds"),
+		AnalystPrompt:          viper.GetString("analyst_prompt"),
+		AnalystModel:           viper.GetString("analyst_model"),
+		DatabaseFilePath:       viper.GetString("database_file_path"),
+		NotificationTrigger:    viper.GetString("notification_trigger"),
+		NotificationWebhookURL: viper.GetString("notification_webhook_url"),
 	}
 
 	if cfg.MarkdownDirPath == "" {
