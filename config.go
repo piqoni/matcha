@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"encoding/xml"
 	"flag"
 	"fmt"
@@ -44,6 +43,145 @@ analyst_prompt:
 analyst_model:
 `
 
+type Config struct {
+	MarkdownDirPath    string
+	MarkdownFilePrefix string
+	MarkdownFileSuffix string
+	Feeds              []RSS
+	GoogleNewsKeywords string
+	Instapaper         bool
+	WeatherLat         float64
+	WeatherLon         float64
+	TerminalMode       bool
+	ReadingTime        bool
+	SunriseSunset      bool
+	ShowImages         bool
+	OpenAIKey          string
+	OpenAIBaseURL      string
+	OpenAIModel        string
+	SummaryPrompt      string
+	AnalystFeeds       []string
+	AnalystPrompt      string
+	AnalystModel       string
+	DatabaseFilePath   string
+}
+
+type RSS struct {
+	url       string
+	limit     int
+	summarize bool
+}
+
+func LoadConfig() (*Config, error) {
+	viper.SetDefault("limit", 20)
+
+	terminalMode := flag.Bool("t", false, "Run Matcha in Terminal Mode, no markdown files will be created")
+	configFile := flag.String("c", "", "Config file path (if you want to override the current directory config.yaml)")
+	opmlFile := flag.String("o", "", "OPML file path to append feeds from opml files")
+	build := flag.Bool("build", false, "Dev: Build matcha binaries in the bin directory")
+	flag.Parse()
+
+	if *build {
+		buildBinaries()
+		os.Exit(0)
+	}
+
+	if *configFile != "" {
+		viper.SetConfigFile(*configFile)
+	} else {
+		viper.AddConfigPath(".")
+		viper.SetConfigName("config")
+		// Generate default if not exists
+		if _, err := os.Stat("./config.yaml"); os.IsNotExist(err) {
+			generateConfigFile()
+		}
+	}
+
+	if err := viper.ReadInConfig(); err != nil {
+		return nil, fmt.Errorf("error reading config: %w", err)
+	}
+
+	cfg := &Config{
+		MarkdownDirPath:    viper.GetString("markdown_dir_path"),
+		MarkdownFilePrefix: viper.GetString("markdown_file_prefix"),
+		MarkdownFileSuffix: viper.GetString("markdown_file_suffix"),
+		GoogleNewsKeywords: viper.GetString("google_news_keywords"),
+		Instapaper:         viper.GetBool("instapaper"),
+		WeatherLat:         viper.GetFloat64("weather_latitude"),
+		WeatherLon:         viper.GetFloat64("weather_longitude"),
+		TerminalMode:       viper.GetBool("terminal_mode") || *terminalMode,
+		ReadingTime:        viper.GetBool("reading_time"),
+		SunriseSunset:      viper.GetBool("sunrise_sunset"),
+		ShowImages:         viper.GetBool("show_images"),
+		OpenAIKey:          viper.GetString("openai_api_key"),
+		OpenAIBaseURL:      viper.GetString("openai_base_url"),
+		OpenAIModel:        viper.GetString("openai_model"),
+		SummaryPrompt:      viper.GetString("summary_prompt"),
+		AnalystFeeds:       viper.GetStringSlice("analyst_feeds"),
+		AnalystPrompt:      viper.GetString("analyst_prompt"),
+		AnalystModel:       viper.GetString("analyst_model"),
+		DatabaseFilePath:   viper.GetString("database_file_path"),
+	}
+
+	if cfg.MarkdownDirPath == "" {
+		wd, _ := os.Getwd()
+		cfg.MarkdownDirPath = wd
+	}
+	if cfg.DatabaseFilePath == "" {
+		cfg.DatabaseFilePath = getDefaultDBPath()
+	}
+
+	cfg.Feeds = loadFeeds(cfg, *opmlFile)
+
+	return cfg, nil
+}
+
+func loadFeeds(cfg *Config, flagOpml string) []RSS {
+	var feeds []RSS
+	// Summary Feeds
+	rawSumFeeds := viper.Get("summary_feeds")
+	if rawSumFeeds != nil {
+		for _, f := range rawSumFeeds.([]interface{}) {
+			url, limit := getFeedAndLimit(f.(string))
+			feeds = append(feeds, RSS{url: url, limit: limit, summarize: true})
+		}
+	}
+
+	// Standard Feeds
+	rawFeeds := viper.Get("feeds")
+	if rawFeeds != nil {
+		for _, f := range rawFeeds.([]interface{}) {
+			url, limit := getFeedAndLimit(f.(string))
+			feeds = append(feeds, RSS{url: url, limit: limit})
+		}
+	}
+
+	// OPML Files (Config dir + Flag)
+	opmlPaths := []string{"config.opml", viper.GetString("opml_file_path"), flagOpml}
+	for _, path := range opmlPaths {
+		if path != "" {
+			if content, err := os.ReadFile(path); err == nil {
+				feeds = append(feeds, parseOPML(content)...)
+			}
+		}
+	}
+
+	if cfg.GoogleNewsKeywords != "" {
+		escaped := url.QueryEscape(cfg.GoogleNewsKeywords)
+		googleNewsUrl := "https://news.google.com/rss/search?hl=en-US&gl=US&ceid=US%3Aen&oc=11&q=" + strings.Join(strings.Split(escaped, "%2C"), "%20%7C%20") // TODO
+		feeds = append(feeds, RSS{url: googleNewsUrl, limit: 15})                                                                                             // #FIXME make it configurable
+	}
+
+	return feeds
+}
+
+func getDefaultDBPath() string {
+	dir, _ := os.UserConfigDir()
+	path := filepath.Join(dir, "brew", "matcha.db")
+	_ = os.MkdirAll(filepath.Dir(path), 0755)
+	return path
+}
+
 func parseOPML(xmlContent []byte) []RSS {
 	o := Opml{}
 	OpmlSlice := []RSS{}
@@ -72,148 +210,14 @@ func getFeedAndLimit(feedURL string) (string, int) {
 		var err error
 		limit, err = strconv.Atoi(chopped[1])
 		if err != nil {
-			fatal(err)
+			log.Fatalf("Error getting limit on feed: %v", err)
 		}
 	}
 	return chopped[0], limit
 }
 
-func bootstrapConfig() {
-	currentDir, direrr := os.Getwd()
-	if direrr != nil {
-		log.Println(direrr)
-	}
-	// if -t parameter is passed overwrite terminal_mode setting in config.yml
-	flag.BoolVar(&terminalMode, "t", terminalMode, "Run Matcha in Terminal Mode, no markdown files will be created")
-	configFile := flag.String("c", "", "Config file path (if you want to override the current directory config.yaml)")
-	opmlFile := flag.String("o", "", "OPML file path to append feeds from opml files")
-	build := flag.Bool("build", false, "Dev: Build matcha binaries in the bin directory")
-	flag.Parse()
-
-	if *build {
-		buildBinaries()
-		os.Exit(0)
-	}
-
-	// if -c parameter is passed overwrite config.yaml setting in config.yaml
-	if len(*configFile) > 0 {
-		viper.SetConfigFile(*configFile)
-	} else {
-		viper.AddConfigPath(".")
-		generateConfigFile(currentDir)
-		viper.SetConfigName("config")
-	}
-
-	err := viper.ReadInConfig()
-	if err != nil {
-		fmt.Print(err)
-		panic("Error reading yaml configuration file")
-	}
-
-	if viper.IsSet("markdown_dir_path") {
-		markdownDirPath = viper.Get("markdown_dir_path").(string)
-	} else {
-		markdownDirPath = currentDir
-	}
-	myFeeds = []RSS{}
-	feeds := viper.Get("feeds")
-	if viper.IsSet("weather_latitude") {
-		lat = viper.Get("weather_latitude").(float64)
-	}
-	if viper.IsSet("weather_longitude") {
-		lon = viper.Get("weather_longitude").(float64)
-	}
-	if viper.IsSet("markdown_file_prefix") {
-		mdPrefix = viper.Get("markdown_file_prefix").(string)
-	}
-	if viper.IsSet("markdown_file_suffix") {
-		mdSuffix = viper.Get("markdown_file_suffix").(string)
-	}
-	if viper.IsSet("openai_api_key") {
-		openaiApiKey = viper.Get("openai_api_key").(string)
-	}
-	if viper.IsSet("openai_base_url") {
-		openaiBaseURL = viper.Get("openai_base_url").(string)
-	}
-	if viper.IsSet("openai_model") {
-		openaiModel = viper.Get("openai_model").(string)
-	}
-	if viper.IsSet("summary_prompt") {
-		summaryPrompt = viper.Get("summary_prompt").(string)
-	}
-	if viper.IsSet("summary_feeds") {
-		summaryFeeds := viper.Get("summary_feeds")
-
-		for _, summaryFeed := range summaryFeeds.([]any) {
-			url, limit := getFeedAndLimit(summaryFeed.(string))
-			myFeeds = append(myFeeds, RSS{url: url, limit: limit, summarize: true})
-		}
-	}
-	if feeds != nil {
-			for _, feed := range feeds.([]any) {
-				url, limit := getFeedAndLimit(feed.(string))
-				myFeeds = append(myFeeds, RSS{url: url, limit: limit})
-			}
-		}
-
-	if viper.IsSet("google_news_keywords") {
-		googleNewsKeywords := url.QueryEscape(viper.Get("google_news_keywords").(string))
-		if googleNewsKeywords != "" {
-			googleNewsUrl := "https://news.google.com/rss/search?hl=en-US&gl=US&ceid=US%3Aen&oc=11&q=" + strings.Join(strings.Split(googleNewsKeywords, "%2C"), "%20%7C%20")
-			myFeeds = append(myFeeds, RSS{url: googleNewsUrl, limit: 15}) // #FIXME make it configurable
-		}
-	}
-
-	// Import any config.opml file on current direcotory
-	configPath := currentDir + "/" + "config.opml"
-	if _, err := os.Stat(configPath); err == nil {
-		xmlContent, _ := os.ReadFile(currentDir + "/" + "config.opml")
-		myFeeds = append(myFeeds, parseOPML(xmlContent)...)
-	}
-	// Append any opml file added by -o parameter
-	if len(*opmlFile) > 0 {
-		xmlContent, _ := os.ReadFile(*opmlFile)
-		myFeeds = append(myFeeds, parseOPML(xmlContent)...)
-	}
-
-	// Append opml file from config.yml
-	if viper.IsSet("opml_file_path") {
-		xmlContent, _ := os.ReadFile(viper.Get("opml_file_path").(string))
-		myFeeds = append(myFeeds, parseOPML(xmlContent)...)
-	}
-
-	instapaper = viper.GetBool("instapaper")
-	reading_time = viper.GetBool("reading_time")
-	show_images = viper.GetBool("show_images")
-	sunrise_sunset = viper.GetBool("sunrise_sunset")
-
-	// Overwrite terminal_mode from config file only if its not set through -t flag
-	if !terminalMode {
-		terminalMode = viper.GetBool("terminal_mode")
-	}
-
-	databaseFilePath := viper.GetString("database_file_path")
-	if databaseFilePath == "" {
-		databaseDirPath, err := os.UserConfigDir()
-		fatal(err)
-		databaseFilePath = filepath.Join(databaseDirPath, "brew", "matcha.db")
-		fatal(os.MkdirAll(filepath.Dir(databaseFilePath), os.ModePerm))
-	}
-
-	db, err = sql.Open("sqlite", databaseFilePath)
-	fatal(err)
-	err = applyMigrations(db)
-	if err != nil {
-		log.Println("Coudn't apply migrations:", err)
-	}
-
-	if !terminalMode {
-		markdown_file_name := mdPrefix + currentDate + mdSuffix + ".md"
-		os.Remove(filepath.Join(markdownDirPath, markdown_file_name))
-	}
-}
-
-func generateConfigFile(currentDir string) {
+func generateConfigFile() {
+	currentDir, _ := os.Getwd()
 	configPath := currentDir + "/" + "config.yaml"
 	if _, err := os.Stat(configPath); err == nil {
 		// File exists, dont do anything

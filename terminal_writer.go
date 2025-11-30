@@ -9,11 +9,11 @@ import (
 
 type TerminalWriter struct{}
 
-func (w TerminalWriter) write(body string) {
+func (w TerminalWriter) Write(body string) {
 	fmt.Println(body)
 }
 
-func (w TerminalWriter) writeLink(title string, url string, newline bool, readingTime string) string {
+func (w TerminalWriter) WriteLink(title string, url string, newline bool, readingTime string) string {
 	var content string
 	content = termlink.Link(title, url)
 	if readingTime != "" {
@@ -25,13 +25,14 @@ func (w TerminalWriter) writeLink(title string, url string, newline bool, readin
 	return content
 }
 
-func (w TerminalWriter) writeSummary(content string, newline bool) string {
+func (w TerminalWriter) WriteSummary(content string, newline bool) string {
+
 	if newline {
 		content += "\n"
 	}
 	return content
 }
 
-func (w TerminalWriter) writeFavicon(s *gofeed.Feed) string {
-	return ""
+func (w TerminalWriter) WriteHeader(feed *gofeed.Feed) string {
+	return fmt.Sprintf("\n### 🍵 %s\n", feed.Title)
 }
