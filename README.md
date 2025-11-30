@@ -90,6 +90,9 @@ Default model is OpenAI's gpt-4o but to override model add configuration:
 ```
 analyst_model: o1-preview
 ```
+#### Analyst Notifications
+The analyst feature supports notifications (Slack hooks or ntfy.sh). See a working example below:
+<img width="687" height="171" alt="image" src="https://github.com/user-attachments/assets/05cb6dd5-a36c-4d29-adbf-1640c049e7d0" />
 
 ### Summarization of Articles using ChatGPT
 
