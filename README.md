@@ -92,7 +92,7 @@ analyst_model: o1-preview
 ```
 #### Analyst Notifications
 The analyst feature supports notifications (Slack hooks or ntfy.sh). See a working example below:
-```
+```yaml
 analyst_prompt: "Check the news titles below and if you see that airbus flights are returned to normal please respond with \"FLIGHTS BACK TO NORMAL\" and nothing else, no explanations."
 analyst_feeds:
   - https://feeds.bbci.co.uk/news/business/rss.xml
