@@ -97,7 +97,8 @@ analyst_prompt: "Check the news titles below and if you see that airbus flights 
 analyst_feeds:
   - https://feeds.bbci.co.uk/news/business/rss.xml
 analyst_model: qwen3:4b
-openai_base_url: http://localhost: 11434/v1 notification_trigger: "FLIGHTS BACK TO NORMAL"
+openai_base_url: http://localhost: 11434/v1
+notification_trigger: "FLIGHTS BACK TO NORMAL"
 notification _webhook_url: https://ntfy.sh/myuniquetopic
 ```
 ### Summarization of Articles using ChatGPT
