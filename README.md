@@ -92,8 +92,14 @@ analyst_model: o1-preview
 ```
 #### Analyst Notifications
 The analyst feature supports notifications (Slack hooks or ntfy.sh). See a working example below:
-<img width="687" height="171" alt="image" src="https://github.com/user-attachments/assets/05cb6dd5-a36c-4d29-adbf-1640c049e7d0" />
-
+```
+analyst_prompt: "Check the news titles below and if you see that airbus flights are returned to normal please respond with \"FLIGHTS BACK TO NORMAL\" and nothing else, no explanations."
+analyst_feeds:
+  - https://feeds.bbci.co.uk/news/business/rss.xml
+analyst_model: qwen3:4b
+openai_base_url: http://localhost: 11434/v1 notification_trigger: "FLIGHTS BACK TO NORMAL"
+notification _webhook_url: https://ntfy.sh/myuniquetopic
+```
 ### Summarization of Articles using ChatGPT
 
 In order to use the summarization feature, you'll first need to set up an OpenAI account. If you haven't already done so, you can sign up [here](https://platform.openai.com/login?launch). Once registered, you'll need to acquire an OpenAI API key which can be found [here](https://platform.openai.com/account/api-keys).
