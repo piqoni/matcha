@@ -26,12 +26,14 @@ Matcha is a daily digest generator for your RSS feeds and interested topics/keyw
 
 ## Features
  - RSS daily **digest**, it will show only articles not previously generated
- - Optional summary of articles from OpenAI for selected feeds
+ - Optional summary of articles from OpenAI/Local LLM models for selected feeds
  - Weather for the next 12 Hours (from [YR](https://www.yr.no/))
  - Quick bookmarking of articles to Instapaper
  - Interested Topics/Keywords to follow (through [Google News](https://news.google.com/))
  - Hacker News comments direct link and distinguishing mostly dicussed posts 🔥
  - Terminal Mode by calling `./matcha -t`
+ - LLM Notifications: get notified when your custom prompt is fulfilled (example: "Notify me when X company is sold")
+ - LLM Analyst: Performs an analysis of article titles and responds based on your prompt (example: "Tell me if you see any investment opportunity")
 
 
 ## Installation & Usage
