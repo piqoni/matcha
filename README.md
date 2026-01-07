@@ -163,3 +163,62 @@ Run matcha with --help option to see current cli options:
 
 #### OPML Import
 To use OPML files (exported from other services), rename your file to `config.opml` and leave it in the directory where matcha is located. The other option is to run the command with -o option pointing to the opml filepath.
+
+
+### Docker
+
+Build
+
+```sh
+docker build -t matcha:local .
+```
+
+Prepare the folder for the config that holds your `config.yaml` file and data folder for the markdown output and persistence.
+
+Ensure your `config.yaml` sets `markdown_dir_path: /data/markdown` (and optionally `database_file_path: /data/matcha.db`).
+
+```sh
+mkdir -p config data/markdown
+```
+
+Run
+
+```sh
+docker run --rm \
+  -v "$PWD/config:/config:ro" \
+  -v "$PWD/data:/data" \
+  matcha:local \
+  -c /config/config.yaml
+```
+
+Run in terminal mode (-t)
+
+```sh
+docker run --rm \
+  -v "$PWD/config:/config:ro" \
+  -v "$PWD/data:/data" \
+  matcha:local \
+  -c /config/config.yaml -t
+```
+
+For more frequent runs and updates run the docker-compose file:
+
+Run once
+
+```sh
+docker compose run --rm matcha-once
+```
+
+Run once with -t
+
+```sh
+docker compose run --rm matcha-once -c /config/config.yaml -t
+```
+
+Run scheduled
+
+```sh
+docker compose up -d matcha-scheduled
+docker compose logs -f matcha-scheduled
+```
+

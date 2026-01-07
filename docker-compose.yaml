@@ -1,0 +1,21 @@
+services:
+  matcha-once:
+    build: .
+    container_name: matcha-once
+    volumes:
+      - ./config:/config:ro
+      - ./data:/data
+    command: ["-c", "/config/config.yaml"]
+
+  matcha-scheduled:
+    build: .
+    container_name: matcha-scheduled
+    volumes:
+      - ./config:/config:ro
+      - ./data:/data
+    environment:
+      MATCHA_INTERVAL_SECONDS: "3600"
+    entrypoint: ["/bin/sh", "-lc"]
+    command:
+      - 'while true; do matcha -c /config/config.yaml || true; sleep "$${MATCHA_INTERVAL_SECONDS}"; done'
+    restart: unless-stopped

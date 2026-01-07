@@ -1,0 +1,20 @@
+.git
+.github
+*.md
+*.png
+*.jpg
+*.jpeg
+*.gif
+
+# Local Config
+config/
+
+# Local outputs
+data/
+dist/
+bin/
+
+# Editor/OS
+.DS_Store
+.idea/
+.vscode/
