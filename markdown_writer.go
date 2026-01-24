@@ -82,7 +82,7 @@ func (w MarkdownWriter) WriteSummary(content string, newLine bool) string {
 
 func (w MarkdownWriter) WriteHeader(feed *gofeed.Feed) string {
 	favicon := w.getFaviconHTML(feed)
-	return fmt.Sprintf("\n### %s %s\n", favicon, feed.Title)
+	return fmt.Sprintf("\n### %s %s\n", favicon, escapeMd(feed.Title))
 }
 
 // Helper method specifically for MarkdownWriter
@@ -104,4 +104,24 @@ func (w MarkdownWriter) getFaviconHTML(s *gofeed.Feed) string {
 	}
 
 	return fmt.Sprintf(`<img src="%s" width="32" height="32" />`, src)
+}
+
+func escapeMd(raw string) (safe string) {
+	out := strings.Builder{}
+	out.Grow(len(raw))
+	i := 0
+	for i < len(raw) {
+		b := raw[i] // we're only escaping ascii characters, so iterating over bytes is fine
+		switch b {
+		case '\\', '<', '>', '[', ']':
+			if err := out.WriteByte('\\'); err != nil {
+				panic(err)
+			}
+		}
+		if err := out.WriteByte(b); err != nil {
+			panic(err)
+		}
+	}
+
+	return out.String()
 }
